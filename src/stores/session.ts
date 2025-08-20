@@ -32,9 +32,9 @@ const sskey = {
     dateExcelFormat: 'dateExcelFormat',
 }
 
-export const sessionStore = defineStore('session', () => {
+export const useSessionStore = defineStore('session', () => {
     // State
-    let ss: Session | null = fetchSession();
+    let ss: Session | null = fetch();
 
     // Getter
     const token = computed(() => (ss ? ss.token : ''));
@@ -52,30 +52,42 @@ export const sessionStore = defineStore('session', () => {
         const _shortFormat = ss ? ss.dateShortFormat : '';
         const _locale = ss ? ss.locale : '';
         switch (_shortFormat) {
-            case 'dd/MM/yyyy': return 'dd/mm/yyyy';
-            case 'MM/dd/yyyy': return 'mm/dd/yyyy';
-            case 'yyyy/MM/dd': return 'yyyy/mm/dd';
-            case 'dd/MM/yy': return 'dd/mm/yy';
-            case 'MM/dd/yy': return 'mm/dd/yy';
-            case 'yy/MM/dd': return 'yy/mm/dd';
-            case 'dd/MMM/yyyy': return 'dd/mm/yyyy';
-            case 'MMM/dd/yyyy': return 'mm/dd/yyyy';
-            case 'yyyy/MMM/dd': return 'yyyy/mm/dd';
-            case 'dd/MMM/yy': return 'dd/mm/yy';
-            case 'MMM/dd/yy': return 'mm/dd/yy';
-            case 'yy/MMM/dd': return 'yy/mm/dd';
-            case 'dd/MMMM/yyyy': return 'dd/mm/yyyy';
-            case 'MMMM/dd/yyyy': return 'mm/dd/yyyy';
-            case 'yyyy/MMMM/dd': return 'yyyy/mm/dd';
-            case 'dd/MMMM/yy': return 'dd/mm/yy';
-            case 'MMMM/dd/yy': return 'mm/dd/yy';
-            case 'yy/MMMM/dd': return 'yy/mm/dd';
-            case 'dd/MMMMM/yyyy': return 'dd/mm/yyyy';
-            case 'MMMMM/dd/yyyy': return 'mm/dd/yyyy';
-            case 'yyyy/MMMMM/dd': return 'yyyy/mm/dd';
-            case 'dd/MMMMM/yy': return 'dd/mm/yy';
-            case 'MMMMM/dd/yy': return 'mm/dd/yy';
-            case 'yy/MMMMM/dd': return 'yy/mm/dd';
+            case 'dd/MM/yyyy':
+            case 'dd/MMM/yyyy':
+            case 'dd/MMMM/yyyy':
+            case 'dd/MMMMM/yyyy':
+                return 'dd/mm/yyyy'; // 👈 target format
+
+            case 'dd/MM/yy':
+            case 'dd/MMM/yy':
+            case 'dd/MMMM/yy':
+            case 'dd/MMMMM/yy':
+                return 'dd/mm/yy'; // 👈 target format
+
+            case 'MM/dd/yyyy':
+            case 'MMM/dd/yyyy':
+            case 'MMMM/dd/yyyy':
+            case 'MMMMM/dd/yyyy':
+                return 'mm/dd/yyyy'; // 👈 target format
+
+            case 'MM/dd/yy':
+            case 'MMM/dd/yy':
+            case 'MMMM/dd/yy':
+            case 'MMMMM/dd/yy':
+                return 'mm/dd/yy'; // 👈 target format
+
+            case 'yyyy/MM/dd':
+            case 'yyyy/MMM/dd':
+            case 'yyyy/MMMM/dd':
+            case 'yyyy/MMMMM/dd':
+                return 'yyyy/mm/dd'; // 👈 target format
+
+            case 'yy/MM/dd':
+            case 'yy/MMM/dd':
+            case 'yy/MMMM/dd':
+            case 'yy/MMMMM/dd':
+                return 'yy/mm/dd'; // 👈 target format
+
             case 'D': {
                 switch (_locale) {
                     case 'en': return 'm/d/yyyy';
@@ -97,7 +109,8 @@ export const sessionStore = defineStore('session', () => {
     });
 
     // Action
-    function fetchSession(): Session {
+    function fetch(): Session {
+        // if (import.meta.env.DEV) console.log('🍍 Fetch Session!!!!!!!!!!!');
         const localData = localStorage.getItem(sskey.session);
         const targetData = localData ? JSON.parse(localData) : null;
 
@@ -117,7 +130,8 @@ export const sessionStore = defineStore('session', () => {
         return targetData;
     }
 
-    function createSession(session: Session) {
+    function create(session: Session) {
+        //   if (import.meta.env.DEV) console.log('🍍 Create Session!!!!!!!!!!!');
         ss = session;
         //
         localStorage.setItem(sskey.session, JSON.stringify(session));
@@ -147,15 +161,15 @@ export const sessionStore = defineStore('session', () => {
         sessionStorage.setItem(sskey.thousandSeparator, session.thousandSeparator ?? '');
     }
 
-    function destroySession() {
-        //   if (import.meta.env.DEV) console.log('🍍Destroy Session!!!!!!!!!!!');
+    function destroy() {
+        //   if (import.meta.env.DEV) console.log('🍍 Destroy Session!!!!!!!!!!!');
         ss = null;
         localStorage.removeItem(sskey.session);
         localStorage.removeItem(sskey.token);
         localStorage.removeItem(sskey.userCode);
     }
 
-    function setPropSession(
+    function setProps(
         props: {
             theme?: string;
             locale?: string;
@@ -169,7 +183,7 @@ export const sessionStore = defineStore('session', () => {
             dateExcelFormat?: string;
         }) {
         if (!ss) return;
-        //   if (import.meta.env.DEV) console.log('🍍Set Date Formats:', props);
+        //   if (import.meta.env.DEV) console.log('🍍 setProps:', props);
         if (ss) {
           ss.firstDayOfWeek = props.firstDayOfWeek ?? ss.firstDayOfWeek ?? '';
           ss.dateShortFormat = props.dateShortFormat ?? ss.dateShortFormat ?? '';
@@ -180,24 +194,24 @@ export const sessionStore = defineStore('session', () => {
           ss.thousandSeparator = props.thousandSeparator ?? ss.thousandSeparator ?? '';
           ss.dateExcelFormat = props.dateExcelFormat ?? ss.dateExcelFormat ?? '';
         }
-        //   localStorage.setItem('session', JSON.stringify(ss));
-        //   localStorage.setItem('FirstDayOfWeek', props.firstDayOfWeek ?? '');
-        //   localStorage.setItem('DateShortFormat', props.dateShortFormat ?? '');
-        //   localStorage.setItem('DateLongFormat', props.dateLongFormat ?? '');
-        //   localStorage.setItem('TimeShortFormat', props.timeShortFormat ?? '');
-        //   localStorage.setItem('TimeLongFormat', props.timeLongFormat ?? '');
-        //   localStorage.setItem('NumDecimalSeparator', props.numDecimalSeparator ?? '');
-        //   localStorage.setItem('NumThousandSeparator', props.numThousandSeparator ?? '');
-        //   localStorage.setItem('NumLocale', props.numLocale ?? '');
+          localStorage.setItem(sskey.session, JSON.stringify(ss));
+          localStorage.setItem(sskey.firstDayOfWeek, props.firstDayOfWeek ?? '');
+          localStorage.setItem(sskey.dateShortFormat, props.dateShortFormat ?? '');
+          localStorage.setItem(sskey.dateLongFormat, props.dateLongFormat ?? '');
+          localStorage.setItem(sskey.timeShortFormat, props.timeShortFormat ?? '');
+          localStorage.setItem(sskey.timeLongFormat, props.timeLongFormat ?? '');
+          localStorage.setItem(sskey.decimalSeparator, props.decimalSeparator ?? '');
+          localStorage.setItem(sskey.thousandSeparator, props.thousandSeparator ?? '');
+          localStorage.setItem(sskey.dateExcelFormat, props.dateExcelFormat ?? '');
 
-        //   sessionStorage.setItem('FirstDayOfWeek', props.firstDayOfWeek ?? '');
-        //   sessionStorage.setItem('DateShortFormat', props.dateShortFormat ?? '');
-        //   sessionStorage.setItem('DateLongFormat', props.dateLongFormat ?? '');
-        //   sessionStorage.setItem('TimeShortFormat', props.timeShortFormat ?? '');
-        //   sessionStorage.setItem('TimeLongFormat', props.timeLongFormat ?? '');
-        //   sessionStorage.setItem('NumDecimalSeparator', props.numDecimalSeparator ?? '');
-        //   sessionStorage.setItem('NumThousandSeparator', props.numThousandSeparator ?? '');
-        //   sessionStorage.setItem('NumLocale', props.numLocale ?? '');
+          sessionStorage.setItem(sskey.firstDayOfWeek, props.firstDayOfWeek ?? '');
+          sessionStorage.setItem(sskey.dateShortFormat, props.dateShortFormat ?? '');
+          sessionStorage.setItem(sskey.dateLongFormat, props.dateLongFormat ?? '');
+          sessionStorage.setItem(sskey.timeShortFormat, props.timeShortFormat ?? '');
+          sessionStorage.setItem(sskey.timeLongFormat, props.timeLongFormat ?? '');
+          sessionStorage.setItem(sskey.decimalSeparator, props.decimalSeparator ?? '');
+          sessionStorage.setItem(sskey.thousandSeparator, props.thousandSeparator ?? '');
+          sessionStorage.setItem(sskey.dateExcelFormat, props.dateExcelFormat ?? '');
     }
 
     return {
@@ -214,9 +228,9 @@ export const sessionStore = defineStore('session', () => {
         thousandSeparator,
         dateExcelFormat,
 
-        fetchSession,
-        createSession,
-        destroySession,
-        setPropSession,
+        fetch,
+        create,
+        destroy,
+        setProps,
     };
 })
