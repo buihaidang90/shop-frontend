@@ -1,23 +1,50 @@
 {
   "files": [],
   "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    }
   ],
   "compilerOptions": {
+    "types": ["vuetify"],
     "module": "nodenext", // or es2020, es2022, esnext, system, node16, nodenext
     "target": "es2023", // or a compatible ES version
     // "sourceMap": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"],
-      "@assets/*": ["./src/assets/*"],
-      "@components/*": ["./src/components/*"],
-      "@configs/*": ["./src/configs/*"],
-      "@helpers/*": ["./src/helpers/*"],
-      "@router/*": ["./src/router/*"],
-      "@stores/*": ["./src/stores/*"],
-      "@views/*": ["./src/views/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@assets/*": [
+        "./src/assets/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@configs/*": [
+        "./src/configs/*"
+      ],
+      "@helpers/*": [
+        "./src/helpers/*"
+      ],
+      "@router/*": [
+        "./src/router/*"
+      ],
+      "@stores/*": [
+        "./src/stores/*"
+      ],
+      "@views/*": [
+        "./src/views/*"
+      ]
     }
-  }
+  },
+  // "skipLibCheck": "true"
+  // "isolatedModules": true,
+  // "allowSyntheticDefaultImports": true,
+  // "esModuleInterop": true,
+  // "forceConsistentCasingInFileNames": true,
+  // "strict": true,
 }

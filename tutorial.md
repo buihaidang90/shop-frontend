@@ -9,8 +9,13 @@ hoặc npm i --exact pinia@3.0.3
 (https://pinia.vuejs.org/)
 
 # cài đặt Vue-Router - thư viện quản lý routes
-npm install vue-router@4
+npm i vue-router@4
 (https://router.vuejs.org/installation)
+
+
+npm i vuetify
+
+npm i vue-i18n@11
 
 <!-- ##################################################################################################### -->
 
