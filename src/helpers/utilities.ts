@@ -1,8 +1,8 @@
 // import crypto from 'crypto'; // for HashService
 // import xmlConverter from "xml-js"; // https://www.npmjs.com/package/xml-js
 // import bcrypt from "bcrypt";
-import appConfig from '@configs/app.config';
-// const saltRounds = 12; // độ phức tạp khi hash text
+import appConfig from "@/configs/app.config";
+const saltRounds = 12; // độ phức tạp khi hash text
 
 // export const xmlToJson = function (xmlString:string, compact:boolean=true):object{
 //     // console.log('🛠️ >> compact >>',compact);
@@ -62,8 +62,12 @@ import appConfig from '@configs/app.config';
 // }
 
 export const clog = function (...data:unknown[]) {
-    // console.log('🛠️ >> app config >>', appConfig);
-    if (appConfig.isDebug || appConfig.isLogging) {
+    // console.log('🛠️ >> appConfig >>', appConfig);
+    let debug = appConfig.isDebug,
+     logging = appConfig.isLogging;
+    let isLogging = false;
+    if (debug === true || logging === true) isLogging = true;
+    if (isLogging) {
         // console.log('🛠️ >>',...data);
         console.log(...data);
     }

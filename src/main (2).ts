@@ -1,0 +1,142 @@
+import { createApp } from "vue";
+import router from "./router";
+import "./style.css";
+import App from "./App.vue";
+const app = createApp(App);
+
+// i18n
+import { createVueI18nAdapter } from "vuetify/locale/adapters/vue-i18n";
+import { createI18n, useI18n } from "vue-i18n";
+const i18n = createI18n({
+  legacy: false, // Vuetify does not support the legacy mode of vue-i18n
+  locale: "vi",
+  fallbackLocale: "en",
+  //   messages,
+  // modifiers: {snakeCase: (str) => str.split(' ').join('_')}
+});
+
+// Vuetify
+import "vuetify/styles";
+import { createVuetify } from "vuetify";
+import { aliases } from "vuetify/iconsets/mdi";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
+const vuetify = createVuetify({
+  locale: {
+    adapter: createVueI18nAdapter({ i18n, useI18n }),
+  },
+  components,
+  directives,
+  icons: {
+    aliases: {
+      ...aliases,
+      iconRefresh: "mdi-refresh",
+      iconLoadData: "mdi-refresh",
+      iconPrint: "mdi-printer",
+      iconSave: "mdi-content-save",
+      iconAdd: "mdi-plus",
+      iconEdit: "mdi-pencil",
+      iconDelete: "mdi-delete",
+      iconClose: "mdi-close-octagon-outline",
+      iconX: "mdi-close",
+      iconCancel: "mdi-cancel",
+      iconReset: "mdi-refresh",
+      iconExport: "mdi-file-export",
+      iconExportExcel: "mdi-file-excel",
+      iconImport: "mdi-file-import",
+      iconSearch: "mdi-magnify",
+      iconFilter: "mdi-filter",
+      iconSettings: "mdi-cog",
+      iconInfo: "mdi-information",
+      iconWarning: "mdi-alert",
+      iconError: "mdi-alert-circle",
+      iconSuccess: "mdi-check-circle",
+      iconHelp: "mdi-help-circle",
+      iconHome: "mdi-home",
+      iconUser: "mdi-account",
+      iconLock: "mdi-lock",
+      iconUnlock: "mdi-lock-open",
+      iconStar: "mdi-star",
+      iconHeart: "mdi-heart",
+      iconCheck: "mdi-check",
+      iconCheckAll: "mdi-checkbox-multiple-marked-outline",
+      iconUncheckAll: "mdi-checkbox-multiple-blank-outline",
+      iconColumnPicker: "mdi-format-columns",
+      iconCloseCircle: "mdi-close-circle",
+      iconPlusCircle: "mdi-plus-circle",
+      iconMinusCircle: "mdi-minus-circle",
+      iconArrowUp: "mdi-arrow-up",
+      iconArrowDown: "mdi-arrow-down",
+      iconArrowLeft: "mdi-arrow-left",
+      iconArrowRight: "mdi-arrow-right",
+      iconChevronUp: "mdi-chevron-up",
+      iconChevronDown: "mdi-chevron-down",
+      iconChevronLeft: "mdi-chevron-left",
+      iconChevronRight: "mdi-chevron-right",
+      iconMenu: "mdi-menu",
+      iconMore: "mdi-dots-horizontal",
+      iconMoreVertical: "mdi-dots-vertical",
+      iconUpload: "mdi-upload",
+      iconDownload: "mdi-download",
+      iconShare: "mdi-share",
+      iconLink: "mdi-link",
+      iconUnlink: "mdi-unlink",
+      iconCopy: "mdi-content-copy",
+      iconCut: "mdi-content-cut",
+      iconPaste: "mdi-content-paste",
+      iconBold: "mdi-format-bold",
+      iconItalic: "mdi-format-italic",
+      iconUnderline: "mdi-format-underline",
+      iconStrikethrough: "mdi-format-strikethrough",
+      iconAlignLeft: "mdi-format-align-left",
+      iconAlignCenter: "mdi-format-align-center",
+      iconAlignRight: "mdi-format-align-right",
+      iconAlignJustify: "mdi-format-align-justify",
+      iconIndentIncrease: "mdi-format-indent-increase",
+      iconIndentDecrease: "mdi-format-indent-decrease",
+      iconList: "mdi-format-list-bulleted",
+      iconOrderedList: "mdi-format-list-numbered",
+      iconQuote: "mdi-format-quote-close",
+      iconCode: "mdi-code-tags",
+      iconTable: "mdi-table",
+      iconImage: "mdi-image",
+      iconVideo: "mdi-video",
+      iconAudio: "mdi-audio",
+      iconCalendar: "mdi-calendar",
+      iconClock: "mdi-clock",
+      iconMap: "mdi-map",
+      iconLocation: "mdi-map-marker",
+      iconPin: "mdi-pin",
+      iconTag: "mdi-tag",
+      iconBookmark: "mdi-bookmark",
+      iconFile: "mdi-file",
+      iconFiles: "mdi-file-multiple",
+      iconFolder: "mdi-folder",
+      iconFolders: "mdi-folder-multiple",
+      iconTrash: "mdi-delete-empty",
+      iconTrashFull: "mdi-delete",
+      iconArchive: "mdi-archive",
+      iconUnarchive: "mdi-archive-outline",
+      iconStarOutline: "mdi-star-outline",
+      iconHeartOutline: "mdi-heart-outline",
+      iconCheckOutline: "mdi-check-outline",
+      iconCloseOutline: "mdi-close-outline",
+      iconPlusOutline: "mdi-plus-outline",
+      iconMinusOutline: "mdi-minus-outline",
+      iconGroup: "mdi-group",
+      iconUngroup: "mdi-ungroup",
+      iconAddMail: "mdi-email-plus-outline",
+      iconAttach: "mdi-attachment",
+      iconAttachedFile: "mdi-paperclip",
+    },
+  },
+});
+app.use(vuetify);
+
+// Pinia
+import { createPinia } from "pinia";
+const pinia = createPinia();
+app.use(pinia);
+
+app.use(router);
+app.mount("#app");
