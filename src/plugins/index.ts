@@ -9,6 +9,7 @@ import vuetify from './vuetify'
 import primevue from './primevue'
 import pinia from '../stores'
 import router from '../router'
+import i18n from './i18n'
 
 // Types
 import type { App } from 'vue'
@@ -19,4 +20,5 @@ export function registerPlugins(app: App) {
     .use(router)
     .use(pinia)
     .use(primevue.PrimeVue, primevue.option).use(primevue.ToastService)
+    .use(i18n.i18n)
 }

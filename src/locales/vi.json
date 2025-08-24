@@ -1,0 +1,13 @@
+{
+    "locales": "vietnamese",
+    "-": {
+        "Account": "Account",
+        "Password": "Password",
+        "OK": "OK",
+        "Cancel": "Cancel",
+        "Reset": "Reset"
+    },
+    "_": {
+        "WebFullName": "Mankichi Issue Management"
+    }
+}

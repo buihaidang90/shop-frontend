@@ -1,0 +1,13 @@
+{
+    "locales": "japanese",
+    "-": {
+        "Account": "Tài khoản",
+        "Password": "Mật khẩu",
+        "OK": "OK",
+        "Cancel": "Hủy",
+        "Reset": "Đặt lại"
+    },
+    "_": {
+        "WebFullName": "Mankichi Issue Management"
+    }
+}
