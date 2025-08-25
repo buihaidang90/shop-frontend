@@ -7,5 +7,9 @@
     {
       "path": "./tsconfig.app.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "module": "esnext", // or es2020, es2022, esnext, system, node16, nodenext
+    "target": "esnext", // or a compatible ES version
+  }
 }

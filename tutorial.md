@@ -1,7 +1,8 @@
-# Step by step to build Shop-FrontEnd
+# Step by step to build Shop-FrontEnd by Vuetify
 
-# tạo mới dự án bằng Vite sử dụng Vuejs
-npm create vite@latest shop-frontend <!-- shop-frontend là tên dự án muốn đặt -->
+# tạo mới dự án bằng Vuetify sử dụng Vuejs
+npm create vuetify@latest shop-frontend
+[shop-frontend] là tên dự án muốn đặt, sau đó làm theo các hướng dẫn và chọn nền tảng thích hợp
 
 # cài đặt Pinia - thư viện quản lý state
 npm i pinia
@@ -12,14 +13,12 @@ hoặc npm i --exact pinia@3.0.3
 npm i vue-router@4
 (https://router.vuejs.org/installation)
 
-
-npm i vuetify
-
-npm i vue-i18n@11
+# cài đặt i18n - thư viện quản lý locale, đa ngôn ngữ, và các định dạng số, ngày tháng, tiền tệ
+npm i vue-i18n
 
 <!-- ##################################################################################################### -->
 
-# cấu hình để chạy debug vuejs trong vs code
+# cấu hình để chạy debug vuejs trong VS code
 trong VS Code, nhấn Ctrl + Shift + D hoặc mở Run and Debug trong left panel.
 trong Run and Debug panel, chọn [create launch.json file], chọn tiếp Node.js.
 trong file launch.json vừa được tạo ra, copy và paste đoạn code cấu hình bên dưới vào file và save lại.
@@ -51,12 +50,15 @@ hoặc trong Run and Debug panel, hoặc phím F5.
 
 # cách viết và đọc file .env, file cấu hình biến môi trường
 
+để thao tác với biến môi trường trong nodejs, cần cài thêm gói @types/node
+npm i @types/node -D
+
 ## tạo file .env và đọc nội dung
 tại thư mục gốc của ứng dụng, tạo file với tên .env (ko có phần mở rộng),
-nội dung có thể tương tự như bên dưới
-<!--
-# Application Settings
+nội dung có thể tương tự như bên dưới:
 
+<!-- ***** -->
+# Application Settings
 VITE_APP_NAME="Shop-Frontend"
 VITE_APP_DEBUG=true
 VITE_APP_LOGGING=true
@@ -64,7 +66,8 @@ VITE_APP_LOGGING=true
 # API Keys and Secrets
 VITE_API_URL=
 VITE_API_KEY=your_secret_api_key_here
--->
+<!-- ***** -->
+
 (*) nhớ thêm [.env] vào file .gitignore, để khi push code lên github, nó sẽ bỏ qua file .env,
 để tránh làm lộ các thông tin quan trọng như cấu hình db, hệ thống.
 
@@ -75,14 +78,14 @@ console.log('App name >>', import.meta.env.VITE_APP_NAME);
 trong thư mục [src], tạo thư mục [configs] (hoặc đặt tên gì gợi nhớ cũng đc).
 trong thư mục [configs], tạo file [app.config.ts] để lưu cấu hình của ứng dụng
 nội dung file [app.config.ts] tương tự như sau:
-<!--
+
 export default {
     appName: import.meta.env.VITE_APP_NAME ?? 'Shop-Frontend',
     isDebug: import.meta.env.VITE_APP_DEBUG === 'true' || import.meta.env.VITE_APP_DEBUG === 'yes' || import.meta.env.VITE_APP_DEBUG === '1',
     isLogging: import.meta.env.VITE_APP_LOGGING === 'true' || import.meta.env.VITE_APP_LOGGING === 'yes' || import.meta.env.VITE_APP_LOGGING === '1',
     apiUrl: import.meta.env.VITE_API_URL,
 }
--->
+
 
 (*) các key theo sau [import.meta.env.] chính là các key đã định nghĩa trong file [.env],
 nếu trong file .env ko có những key này, thì sẽ trả về giá trị sau dấu [||] hoặc undifined,
@@ -91,10 +94,13 @@ hoặc ta có thể code thêm logic để trả về những giá trị hợp l
 (*) Nếu [import.meta.env.] báo lỗi như thông báo bên dưới:
 The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020',...
 để typescript hiểu các meta này, thêm cấu hình sau vào file [tsconfig.json]
-
-"compilerOptions": {
-    "module": "esnext", // or es2020, es2022, esnext, system, node16, nodenext
-    "target": "esnext", // or a compatible ES version
+{
+    ...
+    "compilerOptions": {
+        ...
+        "module": "esnext", // or es2020, es2022, esnext, system, node16, nodenext
+        "target": "esnext", // or a compatible ES version
+    }
 }
 
 sau khi lưu thay đổi, restart lại VS Code để áp dụng cài đặt,
@@ -130,15 +136,13 @@ phải set giá trị trực tiếp thì lúc run/build vite mới hoạt độn
 
 <!-- ##################################################################################################### -->
 
-# cấu hình tên thay thế khi import - alias path
-
-## cấu hình trong file [vite.config.ts]
+# cấu hình tên thư mục thay thế khi import - alias path trong file [vite.config.ts]
 để khi biên dịch code vite hiểu được alias path
 
 import { fileURLToPath, URL } from "url"; // 👈 cần cài đặt gói @types/node
 
 export default defineConfig({
-  plugins: [vue()],
+  ...
   resolve: {
     // cách 1
     // alias: {
@@ -160,31 +164,21 @@ export default defineConfig({
       { find: '@stores', replacement: fileURLToPath(new URL('./src/stores', import.meta.url)) },
       { find: '@views', replacement: fileURLToPath(new URL('./src/views', import.meta.url)) },
     ],
-  },
-  server: {
-    port: 8000, // web-port
-  },
+  }
 });
 
 sử dụng: lúc import chỉ cần thay thế alias tương ứng trong path là đc
 vd: import config from '@/configs/app.config';
 
-## cấu hình trong file [tsconfig.json]
-để khi gõ code, typescript hiểu được alias path và gợi ý
+<!-- ##################################################################################################### -->
 
-  "compilerOptions": {
+# cấu hình port chạy web trong file [vite.config.ts]
+export default defineConfig({
     ...
-    "paths": {
-      "@/*": ["./src/*"],
-      "@assets/*": ["./src/assets/*"],
-      "@components/*": ["./src/components/*"],
-      "@configs/*": ["./src/configs/*"],
-      "@helpers/*": ["./src/helpers/*"],
-      "@router/*": ["./src/router/*"],
-      "@stores/*": ["./src/stores/*"],
-      "@views/*": ["./src/views/*"]
-    }
-  }
+    server: {
+        port: 3000, // Change this to your desired port
+      },
+}
 
 <!-- ##################################################################################################### -->
 
@@ -197,7 +191,7 @@ trong thư mục router, tạo file [index.ts], thêm code tương tự như sau
 
 import { createRouter, createWebHistory } from "vue-router";
 
-const routes = [
+const routes:any = [
     {
         path: '/', // 👈 đường dẫn route sẽ định nghĩa, dùng gọi đến route, vd: router.push('/')
         name: 'Home', // 👈 tên route, dùng gọi đến route, vd: router.push('Home')
@@ -227,6 +221,7 @@ const routes = [
     },
     {
         path: '/:pathMatch(.*)*', // 👈 những route nằm ngoài định nghĩa, sẽ được chuyển về ErrorPage
+        // hoặc: path: '/:cai_gi_do(.*)*',
         redirect: { name: 'ErrorPage' }
     },
     // Catch-all route to handle non-existent paths
@@ -247,10 +242,10 @@ const router = createRouter({
 // to: route muốn đến, from: route xuất phát, next: method xử lý cho đi tiếp đến route [to] hoặc chặn ngay lập tức
 router.beforeEach((to, from, next) => {
     if (to.name !== 'Login' && !isLoggedIn()) {
-        <!-- if (import.meta.env.DEV) console.log(`🏠from [${from.name?.toString()}] to [${to.name?.toString()}] replace by [Login]`); -->
+        <!-- console.log(`🏠from [${from.name?.toString()}] to [${to.name?.toString()}] replace by [Login]`); -->
         next({ name: 'Login', query: to.query });
     } else {
-        <!-- if (import.meta.env.DEV) console.log(`🏠from [${from.name?.toString()}] to [${to.name?.toString()}]`); -->
+        <!-- console.log(`🏠from [${from.name?.toString()}] to [${to.name?.toString()}]`); -->
         next();
     }
 });
@@ -296,11 +291,151 @@ nếu muốn chuyển route và truyền params, thì bắt buộc phải gọi 
 
 # cách sử dụng thông báo Toast (PrimeVue) trong project Vuetify
 
+## cài đặt PrimeVue & Theme primevue
+npm install primevue @primeuix/themes
 
+## tạo file cấu hình PrimeVue
+cấu trúc dự án sau khi cài đặt:
+shop-frontend
+    |__ src
+    |    |__ plugins
+    |    |    |__ index.ts // 👈 file cấu hình chung tất cả plugin cho toàn project
+    |    |    |__ vuetify.ts // 👈 file cấu hình vuetify
+    |    |__ main.ts
+    |__ tsconfig.json
+    |__ vite.config.ts
 
+trong thư mục plugin, tạo file [primevue.ts] để chứa cấu hình sử dụng PrimeVue
 
+import PrimeVue from "primevue/config"; // Configs
+import Aura from '@primeuix/themes/aura'; // Themes
+import ToastService from 'primevue/toastservice'; // Services
 
+export default {
+    PrimeVue,
+    ToastService,
+    option: {
+      ripple: true,
+      theme: {
+        preset: Aura,
+        options: {
+          prefix: 'p',
+          darkModeSelector: '.p-LDark',
+          cssLayer: false,
+        },
+        semantic: {
+          primary: {
+            50: '{indigo.50}',
+            100: '{indigo.100}',
+            200: '{indigo.200}',
+            300: '{indigo.300}',
+            400: '{indigo.400}',
+            500: '{indigo.500}',
+            600: '{indigo.600}',
+            700: '{indigo.700}',
+            800: '{indigo.800}',
+            900: '{indigo.900}',
+            950: '{indigo.950}'
+          }
+        },
+      }
+    }   
+}
 
+## thêm cài đặt cấu hình PrimeVue
+trong hd này ko sử dụng auto-import cho primevue,
+vì khi auto-import, sẽ import hết các component & service ko sử dụng,
+dẫn đến khi bundle project sẽ làm tăng dung lượng source khi publish.
+Nên ta chỉ use những thành phần có sử dụng.
+
+trong thư mục plugins, mở file [index.ts] và thêm cấu hình PrimeVue
+
+// Plugins
+import vuetify from './vuetify'
+import primevue from './primevue' // 👈 import file cấu hình
+import pinia from '../stores'
+import router from '../router'
+import i18n from './i18n'
+import type { App } from 'vue'
+
+export function registerPlugins(app: App) {
+  app
+    .use(vuetify)
+    .use(router)
+    .use(pinia)
+    .use(primevue.PrimeVue, primevue.option).use(primevue.ToastService) // 👈 thiết lập cấu hình
+    .use(i18n.i18n)
+}
+
+## sử dụng Toast message
+trong file [App.vue] hoặc file *.vue muốn sử dụng Toast, thêm code sau
+
+<script lang="ts" setup>
+import { useDisplay } from 'vuetify';
+const { xs, sm, md, lg, width, height } = useDisplay();
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
+const toast = useToast();
+const showToast = async function (message: string, subMessage: string | null, type: string | null, displayTime: number | null) {
+  if (message.trim() === '') return;
+  let _msg = message; // This is main message from Toast
+  let _icon = 'info';
+  if (type) {
+    const arr1 = ['success', 'info', 'warn', 'danger', 'secondary', 'error'];
+    const arr2 = ['s', 'i', 'w', 'd', 'sc', 'e'];
+    if (arr1.indexOf(type) > -1) _icon = type;
+    else if (arr2.indexOf(type) > -1) _icon = arr1[arr2.indexOf(type)];
+  }
+  let _subMessage = subMessage ?? null; // This is sub message from Toast
+  let _displayTime = displayTime ?? 3;
+  if(_displayTime) {
+    _displayTime = _displayTime * 1000;
+    toast.add({ severity: _icon, summary: _msg, detail: _subMessage, life: _displayTime });
+  }
+  else {
+    toast.add({ severity: _icon, summary: _msg, detail: _subMessage });
+  }
+};
+<script>
+
+<template>
+  <v-app>
+    <v-btn @click="showToast('This is message from Toast',null,null,null)">Show Toast</v-btn>
+    <Toast :position="xs ? 'bottom-center' : 'bottom-right'" style='max-width: calc(100vw - 40px);'
+      class="main-toast" />
+  </v-app>
+</template>
+
+<style>
+.main-toast .p-toast-message-icon {
+  margin-top: 4px !important;
+}
+.main-toast .p-toast-close-button {
+  margin-top: 1px !important;
+}
+.main-toast .p-toast-message {
+  margin-bottom: 0.5rem !important;
+}
+</style>
+
+<!-- ##################################################################################################### -->
+
+# provide & inject để sử dụng lại code/component/element mà không cầu định nghĩa lại
+(sử dụng Toast đã định nghĩa ở App.vue)
+
+## provide
+trong file [App.vue], thêm dòng code bên dưới, sau đoạn định nghĩa function showToast
+provide('showToast', showToast);
+
+## inject
+tại nơi (file *.vue) muốn sử dụng Toast, phần [script], thêm dòng code sau
+const showToast = inject('showToast') as (message: string, subMessage: string | null, type: string | null) => void;
+
+<template v-slot:append>
+    <v-btn icon="mdi-bell" @click="showToast('This is message from Inject',null,null)">Show Toast</v-btn>
+</template>
+
+<!-- ##################################################################################################### -->
 
 
 
@@ -341,18 +476,18 @@ nếu muốn chuyển route và truyền params, thì bắt buộc phải gọi 
 
 https://emojicombos.com/
 
-📷💻🖥️📺📟🎬🕑🎧📣🚦🔗⛲️💠🎲💲
-🔲🧱🖼️🗺️🎨🏞️💫🎸🧲🎛️💾🌐🌍🔴🟢Ⓜ️⚕️🪖🛑
-⭐✨⚡☄️☁️💨💭♨️💥🔥💧💦🫧🧺🌫️
+📷💻🖥️📺📟🎬🕑🎧📣🚦🔗
+🔲🧱🖼️🗺️🎨🏞️💫🎸🧲🎛️💾🌐🌍🔴🟢Ⓜ️⚕️
+⭐✨⚡☄️☁️💨💭♨️💥🔥💧💦🧺⛲️🌫️
 🏎️🚚🛒✈️🛩️🚀⚔️🔨🔍🧬🛠🛠️⚒️🔧⚙️📌🔫🖌️🪓🔪🧷📏📐
-😼🐎🐇🕊️🐒🐑🐧🐝🐞🐲🐉🐹🐘🐛🐌🐟🐸🧸🦢𝄞🙈🐳🐚🐠
-🏛️🏠📅🗃️📂⌘🧩⚜️♻️🔋🪪
-👾👻🤖💂😊👣👋👏✋✋🏻👉👈👌💀👀💋🫀🦷🧠🔔🗝️🔑🔐🔒🆔#️⃣ℹ️🔄🛡️
+😼🐎🐇🕊️🐒🙈🐑🐧🐝🐞🐲🐉🐛🐹🐘🐌🐟🐸🧸🦢🐳🐚🐠
+🏛️🏠📅🗃️📂⌘🧩⚜️♻️🔋💲𝄞💠🎲
+👾👻🤖💂😊👣👋👏✋✋🏻👉👈👌💀👀💋🦷🧠🔔🗝️🔑🔐🔒🆔#️⃣ℹ️🔄🛡️
 🎀💗💯👥👤🚧❓❗⛔🚫⚠️✅❌✔️🗪💬🗨️🗯️📤✉️📧⌯⌲📫
 🧾📜📋📑📝📄📰🗐⿻📕📚
-🌷🌼💐🌹🌸🌺🥀🪷
-🌵🌲🌳🥦🌴🌱🎋🌿🌾🍃🍂🍁🍀☘️
-🍎🍅🍋🍒🍓🍇🍍🥑🍉🥝🥥🥕🌶️🍆🥜🥬🥒🫒
+🌷🌼💐🌹🌸🌺🥀🌾
+🌵🌲🌳🥦🌴🌱🎋🌿🍃🍂🍁🍀☘️
+🍎🍅🍋🍒🍓🍇🍍🥑🍉🥝🥥🥕🌶️🍆🥜🥬🥒
 🥤🥗🍔🍗🍟🥓🧀🍚🍜🍟🥘🥟🍵⛲
 🍹🍨❄️☀️🌈💎💍
 🪂🎈🪁⛰️⛱️
