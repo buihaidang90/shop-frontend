@@ -1,11 +1,35 @@
 <script setup lang="ts">
 import { clog } from '@/helpers/utilities';
-import { useTemplateRef, ref } from 'vue';
 import { useDisplay } from 'vuetify';
 const { xs, sm, md, lg, width, height } = useDisplay();
-// clog(`🖼️ xs=${xs.value}, sm=${sm.value}, md=${md.value}, lg=${lg.value}`);
+// clog(`💠 xs=${xs.value}, sm=${sm.value}, md=${md.value}, lg=${lg.value}`);
+
+const setLoadingPanel = inject("setLoadingPanel") as (visible:boolean) => void;
+const showLoading = function () {
+    setLoadingPanel(true);
+    setTimeout(() => {
+       hideLoading();
+    }, 3000);
+};
+const hideLoading = function () {
+    setLoadingPanel(false);
+};
 
 const showToast = inject('showToast') as (message: string, subMessage: string | null, type: string | null) => void;
+const showMsg1 = inject("showMsg") as (message: string, title: string | null, type: string | null) => void;
+const showMsg2 = inject("showMessage") as (message: string, title: string | null, type: string | null, showCancel: boolean | null) => void;
+
+const showMess = async function () {
+    let kind = 2; //1; //
+    const msg = 'A message box component in Vue 3 can be created as a reusable modal dialog. This component can be used to display alerts, confirmations, or other brief messages to the user.';
+    const type = 'question'; // error, warning, info, success, question, null
+    let dialg: any;
+    if (kind === 1)
+        dialg = await showMsg1(msg, null, type);
+    else
+        dialg = await showMsg2(msg, null, type, null);
+    clog(`💠 showMess..`, dialg);
+};
 
 const drawer = ref(false);
 function toggleDrawer() {
@@ -14,23 +38,23 @@ function toggleDrawer() {
 
 const txtSearchBar = useTemplateRef('txtSearchBar');
 const onClickClear = function () {
-    clog(`🖼️ onClickClear..to do task at here`);
+    clog(`💠 onClickClear..to do task at here`);
 };
 const onClickSearch = function () {
-    clog(`🖼️ onClickSearch..to do task at here`);
+    clog(`💠 onClickSearch..to do task at here`);
 };
 
 const onChangeFocused = function (focused: boolean) {
-    // clog(`🖼️ onChangeFocused..focused=${focused}`);
+    // clog(`💠 onChangeFocused..focused=${focused}`);
     if (!focused) onToggleSearch();
 };
 
 const toggleSearchBar = ref(false);
 const onToggleSearch = function () {
-    // clog(`🖼️ onToggleSearch..`);
+    // clog(`💠 onToggleSearch..`);
     toggleSearchBar.value = !toggleSearchBar.value;
 
-    // clog(`🖼️ onToggleSearch..txtSearchBar.value=`,txtSearchBar.value);
+    // clog(`💠 onToggleSearch..txtSearchBar.value=`,txtSearchBar.value);
     setTimeout(() => {
         if (toggleSearchBar) {
             txtSearchBar.value?.focus();
@@ -64,7 +88,12 @@ const onToggleSearch = function () {
             <template v-slot:append>
                 <v-btn icon="mdi-magnify" @click="onToggleSearch" rounded="xl" size="large" density="comfortable"
                     v-if="!toggleSearchBar"></v-btn>
-                <v-btn icon="mdi-dots-vertical" @click="showToast('abc',null,'i')" rounded="xl" size="large" density="comfortable"></v-btn>
+                <v-btn icon="mdi-bell" @click="showToast('abc', null, 'i')" rounded="xl" size="large"
+                    density="comfortable"></v-btn>
+                <v-btn icon="mdi-dots-vertical" @click="showMess" rounded="xl" size="large"
+                    density="comfortable"></v-btn>
+                <v-btn icon="mdi-reload" @click="showLoading" rounded="xl" size="large"
+                    density="comfortable"></v-btn>
             </template>
         </v-app-bar>
 
@@ -101,13 +130,15 @@ const onToggleSearch = function () {
 </template>
 <style scoped></style>
 <style>
-.main-toast .p-toast-message-icon{
+.main-toast .p-toast-message-icon {
     margin-top: 4px !important;
 }
+
 .main-toast .p-toast-close-button {
     margin-top: 1px !important;
 }
-.main-toast .p-toast-message{
+
+.main-toast .p-toast-message {
     margin-bottom: 0.5rem !important;
 }
 </style>

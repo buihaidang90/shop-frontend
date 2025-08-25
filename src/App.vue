@@ -1,15 +1,10 @@
-<template>
-  <v-app>
-    <router-view />
-    <Toast :position="xs ? 'bottom-center' : 'bottom-right'" style='max-width: calc(100vw - 40px);'
-      class="main-toast" />
-  </v-app>
-</template>
-
 <script lang="ts" setup>
 import { useDisplay } from 'vuetify';
 const { xs, sm, md, lg, width, height } = useDisplay();
 // clog(`🖼️ xs=${xs.value}, sm=${sm.value}, md=${md.value}, lg=${lg.value}`);
+
+//======================================================================================
+
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
@@ -36,7 +31,42 @@ const showToast = async function (message: string, subMessage: string | null, ty
   }
 };
 provide('showToast', showToast);
+
+//======================================================================================
+
+const msgBox = ref<{
+  show: (message: string, title: string | null, type: string | null) => Promise<boolean>
+  showMessage: (message: string, title: string | null, type: string | null, showCancel: boolean | null) => Promise<string>
+} | null>(null);
+const showMsg = async function (message: string, title: string | null, type: string | null) {
+  if (!msgBox.value) return false;
+  return await msgBox.value.show(message, title, type);
+};
+const showMessage = async function (message: string, title: string | null, type: string | null, showCancel: boolean | null) {
+  if (!msgBox.value) return false;
+  return await msgBox.value.showMessage(message, title, type, showCancel);
+};
+provide('showMsg', showMsg);
+provide('showMessage', showMessage);
+
+//======================================================================================
+
+const loadingBox = ref<{ setVisible: (visible:boolean) => void } | null>(null);
+const setLoadingPanel = function (visible:boolean) {
+  if(loadingBox.value) loadingBox.value.setVisible(visible);
+};
+provide('setLoadingPanel', setLoadingPanel);
 </script>
+
+<template>
+  <v-app>
+    <router-view />
+    <Toast :position="xs ? 'bottom-center' : 'bottom-right'" style='max-width: calc(100vw - 40px);'
+      class="main-toast" />
+    <MessageBox ref="msgBox"/>
+    <LoadingPanel ref="loadingBox"/>
+  </v-app>
+</template>
 
 <style>
 .main-toast .p-toast-message-icon {

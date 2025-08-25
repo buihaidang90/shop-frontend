@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import appConfig from "@/configs/app.config";
-import { ref, computed, nextTick } from 'vue';
+// import { ref, computed, nextTick } from 'vue';
 import DOMPurify from 'dompurify';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 import { useDisplay } from 'vuetify';
-const { xs, sm, md, lg, width, height } = useDisplay();
+const { xs } = useDisplay();
+// const { xs, sm, md, lg, width, height } = useDisplay();
 
 const props = defineProps({
     title: {
@@ -38,7 +39,7 @@ const props = defineProps({
     dialogResult: {
         type: String,
         required: false,
-        default: 'c'
+        default: 'c' // canceled
     }
 });
 
@@ -52,13 +53,13 @@ const localShowOK = ref(props.showOK);
 const localShowYes = ref(props.showYes);
 const localShowNo = ref(props.showNo);
 const localShowX = ref(props.showX);
-
-
 const localDialogResult = ref(props.dialogResult);
+
 const isVisible = ref(false);
-const yesButton = ref(null);
-const okButton = ref(null);
-const previouslyFocusedElement = ref(null);
+const yesButton: any = ref(null);
+const okButton: any = ref(null);
+const previouslyFocusedElement: any = ref(null);
+
 const sanitizedMessage = computed(() => {
     return DOMPurify.sanitize(localMessage.value.replace(/\n/g, '<br>'));
 });
@@ -67,7 +68,6 @@ const computedMinWidth = computed(() => {
     console.log(window.outerWidth);
     console.log(window.document.body.clientWidth);
     //return window.innerWidth <= 370 ? 300 : 370;
-
     return 350;
 });
 
@@ -90,7 +90,8 @@ const logIcon = computed(() => {
             return "📣";
     }
 });
-const computedBorder = computed(() => {
+
+const borderBox = computed(() => {
     const icon = localIcon.value ? localIcon.value.toLowerCase() : '';
     switch (icon) {
         case 'error': case 'e':
@@ -110,7 +111,7 @@ const computedBorder = computed(() => {
     }
 });
 
-const computedIcon = computed(() => {
+const showIcon = computed(() => {
     const icon = localIcon.value ? localIcon.value.toLowerCase() : '';
     switch (icon) {
         case 'error': case 'e':
@@ -120,7 +121,7 @@ const computedIcon = computed(() => {
         case 'info': case 'i':
             return { icon: 'mdi-information', color: 'info', animate: 'animate__animated animate__tada animate__slow' };
         case 'success': case 's':
-            return { icon: 'mdi-checkbox-marked-circle-outline', color: 'info', animate: 'animate__animated animate__heartBeat animate__slow' };
+            return { icon: 'mdi-checkbox-marked-circle-outline', color: 'success', animate: 'animate__animated animate__heartBeat animate__slow' };
         case 'question': case 'q':
             return { icon: 'mdi-help-circle', color: 'success', animate: 'animate__animated animate__flip animate__slow' };
         case 'none': case 'n':
@@ -130,29 +131,11 @@ const computedIcon = computed(() => {
     }
 });
 
-let resolveAction;
-let resolveButton;
+// type boolResolved = Awaited<Promise<boolean>>; // resolve type => return result of Promise
+// type stringResolved = Awaited<Promise<boolean>>; // resolve type => return result of Promise
 
-function close() {
-    if (props.onClose) {
-        props.onClose();
-    }
-}
-
-function handleYes() { localDialogResult.value = 'y'; isVisible.value = false; }
-function handleNo() { localDialogResult.value = 'n'; isVisible.value = false; }
-
-function handleOk() {
-    localDialogResult.value = 'o';
-    //modelValue = false;
-    isVisible.value = false;
-}
-
-function handleCancel() {
-    localDialogResult.value = 'c';
-    //modelValue = false;
-    isVisible.value = false;
-}
+let resolveAction: any;
+let resolveButton: any;
 
 watch(isVisible, (newValue, oldValue) => {
     if (newValue !== oldValue) {
@@ -170,19 +153,19 @@ watch(isVisible, (newValue, oldValue) => {
         } else {
             //emit('update:modelValue', newValue);
             if (localDialogResult.value === "o") {
-                console.log("Ⓜ️-MsgBox: return  [ OK ] 👌")
+                console.log("Ⓜ️-MsgBox: return [ OK ] 👌")
                 if (resolveAction) resolveAction(true);
                 if (resolveButton) resolveButton(localDialogResult.value);
             } else if (localDialogResult.value === "y") {
-                console.log("Ⓜ️-MsgBox: return  [ Yes ] 👍")
+                console.log("Ⓜ️-MsgBox: return [ Yes ] ✔️")
                 if (resolveAction) resolveAction(true);
                 if (resolveButton) resolveButton(localDialogResult.value);
             } else if (localDialogResult.value === "n") {
-                console.log("Ⓜ️-MsgBox: return  [ No ] ❎")
-                if (resolveAction) resolveAction(true);
+                console.log("Ⓜ️-MsgBox: return [ No ] ✖️")
+                if (resolveAction) resolveAction(false);
                 if (resolveButton) resolveButton(localDialogResult.value);
             } else {
-                console.log("Ⓜ️-MsgBox: return  [ Cancel ] ✖️")
+                console.log("Ⓜ️-MsgBox: return [ Cancel ] ❌")
                 if (resolveAction) resolveAction(false);
                 if (resolveButton) resolveButton(localDialogResult.value);
             }
@@ -195,52 +178,122 @@ watch(isVisible, (newValue, oldValue) => {
     }
 });
 
-function show(message, title, showCancel, icon) {
+function handleYes() {
+    localDialogResult.value = 'y';
+    isVisible.value = false;
+}
+
+function handleNo() {
+    localDialogResult.value = 'n';
+    isVisible.value = false;
+}
+
+function handleOk() {
+    localDialogResult.value = 'o';
+    //modelValue = false;
+    isVisible.value = false;
+}
+
+function handleCancel() {
+    localDialogResult.value = 'c';
+    //modelValue = false;
+    isVisible.value = false;
+}
+
+function close() {
+    if (props.onClose) {
+        props.onClose();
+    }
+}
+
+function show(message: string, title: string | null, type: string | null):Promise<boolean> {
     return new Promise((resolve) => {
         previouslyFocusedElement.value = document.activeElement;
         localTitle.value = title || t('_.WebFullName');//  props.title;
         localMessage.value = message || props.message;
-        localIcon.value = icon || props.icon;
+        localShowCancel.value = false;
         localShowX.value = true;
-        localShowOK.value = true;
-        localShowYes.value = false;
-        localShowNo.value = false;
-        localShowCancel.value = showCancel !== undefined ? showCancel : props.showCancel;
         isVisible.value = true;
+        let _type = type ? type.toLowerCase() : 'none';
+        switch (_type) {
+            case 'question': case 'q':
+                localIcon.value = _type;
+                localShowOK.value = false;
+                localShowYes.value = true;
+                localShowNo.value = true;
+                break;
+            case 'error': case 'e':
+            case 'warning': case 'w':
+            case 'info': case 'i':
+            case 'success': case 's':
+            case 'none': case 'n':
+                localIcon.value = _type;
+                localShowOK.value = true;
+                localShowYes.value = false;
+                localShowNo.value = false;
+                break;
+            default:
+                localIcon.value = props.icon;
+                localShowOK.value = props.showOK;
+                localShowYes.value = props.showYes;
+                localShowNo.value = props.showNo;
+                break;
+        }
         resolveAction = resolve;
-
     });
 }
 
-function showMess(message: string, title: string, buttonSet: string, icon: string, buttonTextSet) {
+function showMessage(message: string, title: string | null, type: string | null, showCancel: boolean | null):Promise<string> {
     return new Promise((resolve) => {
-        buttonSet = buttonSet.toLowerCase();
+        let _showCancel = showCancel ?? false;
+        let _type = type ? type.toLowerCase() : 'none';
+        switch (_type) {
+            case 'question': case 'q':
+                localIcon.value = _type;
+                localShowOK.value = false;
+                localShowCancel.value = _showCancel;
+                localShowYes.value = true;
+                localShowNo.value = true;
+                break;
+            case 'error': case 'e':
+            case 'warning': case 'w':
+            case 'info': case 'i':
+            case 'success': case 's':
+            case 'none': case 'n':
+                localIcon.value = _type;
+                localShowOK.value = !_showCancel;
+                localShowCancel.value = _showCancel;
+                localShowYes.value = false;
+                localShowNo.value = false;
+                break;
+            default:
+                localIcon.value = props.icon;
+                localShowOK.value = props.showOK;
+                localShowCancel.value = props.showCancel;
+                localShowYes.value = props.showYes;
+                localShowNo.value = props.showNo;
+                break;
+        }
         previouslyFocusedElement.value = document.activeElement;
         localTitle.value = title || t('_.WebFullName');//  props.title;
         localMessage.value = message || props.message;
-        localIcon.value = icon || props.icon;
-        localShowOK.value = buttonSet !== undefined ? buttonSet.includes('o') : props.showOK;
-        localShowCancel.value = buttonSet !== undefined ? buttonSet.includes('c') : props.showCancel;
-        localShowYes.value = buttonSet !== undefined ? buttonSet.includes('y') : props.showYes;
-        localShowNo.value = buttonSet !== undefined ? buttonSet.includes('n') : props.showNo;
         localShowX.value = localShowOK.value || localShowCancel.value;
         isVisible.value = true;
         resolveButton = resolve;
     });
 }
 
-
-defineExpose({ close, show, showMess });
+defineExpose({ close, show, showMessage });
 </script>
 
 <template>
-    <v-dialog v-model="isVisible" transition="dialog-bottom-transition" width="auto" :min-width="xs ? 330 : 450"
+    <v-dialog v-model="isVisible" transition="dialog-bottom-transition" width="auto" :min-width="xs ? 330 : 450" :max-width="xs ? 'auto' : '60%'"
         :persistent="!localShowX" :z-index="7777">
-        <v-card rounded="xl" :border="computedBorder" class="border-b-xl">
+        <v-card rounded="xl" :border="borderBox" class="border-lg">
             <v-card-title class="pa-0 ps-3 d-flex align-center shadow-b30"
                 style="min-height: 37px; background-color: rgb(var(--v-theme-primary)); color: rgb(var(--v-theme-on-primary));">
-                <v-icon class="mr-1" v-if="xs && computedIcon.icon" :color="computedIcon.color">{{ computedIcon.icon
-                    }}</v-icon>
+                <v-icon class="mr-1" v-if="xs && showIcon.icon" :color="showIcon.color">
+                    {{ showIcon.icon }}</v-icon>
                 {{ localTitle }}
                 <v-btn v-if="localShowX" icon rounded="lg" @click="handleCancel" class="mr-0 ml-auto align-self-end"
                     variant="text"><v-icon>mdi-close</v-icon></v-btn>
@@ -249,8 +302,8 @@ defineExpose({ close, show, showMess });
             <v-card-text class="pa-3">
                 <v-row :noGutters="xs" dense align="center">
                     <v-col cols="auto">
-                        <v-icon v-if="(!xs) && computedIcon.icon" :color="computedIcon.color" :size="xs ? 48 : 56"
-                            :class="computedIcon.animate">{{ computedIcon.icon }}
+                        <v-icon v-if="(!xs) && showIcon.icon" :color="showIcon.color" :size="xs ? 48 : 56"
+                            :class="showIcon.animate">{{ showIcon.icon }}
                         </v-icon>
                     </v-col>
                     <v-col v-html="sanitizedMessage"></v-col>
@@ -272,8 +325,8 @@ defineExpose({ close, show, showMess });
 
                     <v-hover v-slot:default="{ isHovering, props }">
                         <v-btn v-if="localShowOK" v-bind:="props" ref="okButton" :elevation="isHovering ? 4 : 0"
-                            color="btn-default" class="msv-button " @click="handleOk"
-                            :min-width="xs ? 101 : 111">{{ t('-.OK') }}</v-btn>
+                            color="btn-default" class="msv-button " @click="handleOk" :min-width="xs ? 101 : 111">{{
+                            t('-.OK') }}</v-btn>
                     </v-hover>
                     <v-hover v-if="localShowCancel" v-slot:default="{ isHovering, props }">
                         <v-btn v-bind:="props" :elevation="isHovering ? 4 : 0" color="btn-cancel" class="msv-button "

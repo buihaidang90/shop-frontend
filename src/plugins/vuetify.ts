@@ -5,15 +5,15 @@
  */
 
 // Styles
-import '@mdi/font/css/materialdesignicons.css'
-import 'vuetify/styles'
+import "@mdi/font/css/materialdesignicons.css";
+import "vuetify/styles";
 
 // Composables
-import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
+import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
 // import { aliases } from 'vuetify/iconsets/mdi'
-import i18n from './i18n'
+import i18n from "./i18n";
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -23,7 +23,108 @@ export default createVuetify({
   components,
   directives,
   theme: {
-    defaultTheme: 'system',
+    defaultTheme: "lightV",
+    themes: {
+      lightV: {
+        dark: false,
+        colors: {
+          // background: "#ecedf5",
+          primary: "#165db2",
+          secondary: "#006687",//"#b0bec5",//
+
+          "field-disabled": "#969696",
+          "field-readonly": "#ffff9b",
+          "field-readonlyDark": "rgb(120 131 5 / 64%)",
+          "field-lov": "#9bffff",
+          "grd-header-bg": "#1867C0",
+          "grd-header-text": "#ffffff",
+          "btn-default": "#1867C0", // Primary blue
+          "btn-save": "#1867C0", // Success green
+          "btn-close": "#1867C0", // Neutral grey
+          "btn-cancel": "#b0bec5", // Neutral grey: #186770
+          "btn-delete": "#1867C0", // Danger red
+          "btn-load": "#1867C0", // Info blue
+          "btn-add": "#1867C0", // Success green
+          "btn-edit": "#1867C0", // Warning orange
+          "btn-reset": "#1867C0", // Purple
+          "btn-print": "#4CAF50", // Blue-grey
+          "btn-export": "#4CAF50", // Teal
+          "btn-import": "#4CAF50", // Indigo
+
+          sttReqNew: "#009b00",
+          sttReqDiscussingTogether: "#0164ff",
+          sttReqMsvChecking: "#7f06c9",
+          sttReqCustomerConfirm: "#ff4801",
+          sttReqConfirmingTogether: "#186770",
+          sttReqWaitingMsvClose: "#ff0027",
+          //sttReqClosed: '#a19c9c',
+          sttReqClosed: "#990000",
+          sttReqCanceled: "#383838",
+
+          sttCurrent: "#008c00",
+          sttNeedCheck: "#ff0026",
+          sttOnGoing: "#0042cf",
+          sttLiquidation: "#ff4800",
+          sttDefault: "#000000",
+
+          excelColHeaderBg: "#c6ddf6",
+          excelColHeaderText: "#000000",
+          excelRowGroupBg: "#cccccc",
+          excelRowGroupText: "#000000",
+        },
+        variables: {
+          "overlay-background": "#161c25",
+          "activated-opacity": "0.2",
+        },
+      },
+      darkV: {
+        // Dark theme for Vuetify
+        dark: true,
+        colors: {
+          "field-disabled": "#C8C8C8",
+          "field-readonly": "#5c5200",
+          "field-readonlyDark": "rgb(120 131 5 / 64%)",
+          "field-lov": "#004d4d",
+          "btn-default": "#22477a",
+          "btn-save": "#22477a",
+          "btn-cancel": "#62471a",
+          "btn-delete": "#22477a",
+          "btn-load": "#22477a",
+          "btn-close": "#22477a",
+          "btn-add": "#22477a",
+          "btn-edit": "#22477a",
+          "btn-reset": "#22477a",
+          "btn-print": "#22477a",
+          "btn-export": "#134416",
+          "btn-import": "#134416",
+
+          sttReqNew: "#009b00",
+          sttReqDiscussingTogether: "#0164ff",
+          sttReqMsvChecking: "#7f06c9",
+          sttReqCustomerConfirm: "#ff4801",
+          sttReqConfirmingTogether: "#186770",
+          sttReqWaitingMsvClose: "#ff0027",
+          //sttReqClosed: '#a19c9c',
+          sttReqClosed: "#990000",
+          sttReqCanceled: "#383838",
+
+          sttCurrent: "#009b00",
+          sttNeedCheck: "#ff0026",
+          sttOnGoing: "#0064ff",
+          sttLiquidation: "#ff4800",
+          sttDefault: "#ffffff",
+
+          excelColHeaderBg: "#c6ddf6",
+          excelColHeaderText: "#000000",
+          excelRowGroupBg: "#cccccc",
+          excelRowGroupText: "#000000",
+        },
+        variables: {
+          "overlay-background": "#181c23",
+          "activated-opacity": "0.2",
+        },
+      },
+    },
   },
   // icons: {
   //   aliases: {
@@ -128,4 +229,4 @@ export default createVuetify({
   //     iconAttachedFile: "mdi-paperclip",
   //   },
   // },
-})
+});

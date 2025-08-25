@@ -23,7 +23,7 @@ const routes:any = [
         path: '/',
         component: () => import('@/layouts/MainLayout.vue'),
         children: [
-            { path: '', name: 'Home', component: () => import('@/pages/index.vue') },
+            { path: '', name: 'Home', component: () => import('@/pages/index.vue'), /*meta: { title: 'Shop Management - Home' }*/ },
         ]
     },
     // {
@@ -62,7 +62,8 @@ const router = createRouter({
 //     }
 // });
 
-router.afterEach(() => {
+router.afterEach((to, from, next) => {
+    document.title = to.meta.title ?? 'Shop Management'; // Fallback title
     window.scrollTo(0, 0);
 });
 
