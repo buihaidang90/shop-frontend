@@ -16,6 +16,11 @@ npm i vue-router@4
 # cài đặt i18n - thư viện quản lý locale, đa ngôn ngữ, và các định dạng số, ngày tháng, tiền tệ
 npm i vue-i18n
 
+# cài đặt dayjs - thư viện quản lý ngày giờ
+npm i dayjs
+
+# 
+
 <!-- ##################################################################################################### -->
 
 # cấu hình để chạy debug vuejs trong VS code
