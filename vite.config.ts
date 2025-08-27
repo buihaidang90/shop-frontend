@@ -75,9 +75,6 @@ export default defineConfig({
     },
     extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"],
   },
-  server: {
-    port: 8000,
-  },
   css: {
     preprocessorOptions: {
       sass: {
@@ -88,4 +85,15 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    port: 8000,
+  },
+  // base: './', // or ''
+  // build: {
+  //   outDir: "dist", // thư mục chứa output sau khi chạy lệnh build, mặc định là dist
+  //   assetsDir: 'static-assets', // Assets will be in ./dist/static-assets (if outDir is 'dist')
+  // },
+  // publicDir: './my-public-files', // thư mục chứa file tĩnh (static assets) ./my-public-files 
+  // => Tùy chọn này chỉ định một thư mục cho các tài sản tĩnh được sao chép trực tiếp vào outDir
+  // mà không cần xử lý bởi quy trình build của Vite. Mặc định là public
 });

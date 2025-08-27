@@ -24,9 +24,12 @@ const discountTabs = reactive([
   },
 ]);
 
-const onUpdateProItem = function (modelValue: any, btn:object) {
-  // clog('modelValue >>', modelValue);
-  clog('btn obj >>', btn);
+const onItemClickProd = function (modelValue: any) {
+  clog('onItemClickProd >> modelValue >>', modelValue);
+};
+const onBtnClickProd = function (modelValue: any, btn:object) {
+  // clog('onBtnClickProd >> modelValue >>', modelValue);
+  clog('onBtnClickProd >> btn obj >>', btn);
 };
 </script>
 
@@ -41,7 +44,7 @@ const onUpdateProItem = function (modelValue: any, btn:object) {
   </v-card>
 
   <v-card class="mt-2 border-xl" border="info lg" width="100%">
-    <v-tabs v-model="tabs" bg-color="primary" color="white" grow>
+    <v-tabs v-model="tabs" bg-color="primary" color="white" align-tabs="center">
       <v-tab v-for="(item, index) in discountTabs" :key="index" :value="index">
         <!-- <v-icon icon="mdi-phone"></v-icon> -->
         <!-- {{ xs ? '' : `Tab 1` }} -->
@@ -57,7 +60,7 @@ const onUpdateProItem = function (modelValue: any, btn:object) {
                 img="https://bizweb.dktcdn.net/thumb/medium/100/565/842/products/image-79e72a57-d705-4f6b-a35f-024032ea1a7a.jpg"
                 :price=20590 :sub-price=23590 unit-currency="vnđ" @update:modelValue="onUpdateProItem"></product-item> -->
                 <product-item title="Combo 5 Loại Rau Củ: Cải Ngọt, Rau Muống, Rau Dền, Cà Rốt, Cà Chua"
-                :price=20590 :sub-price=23590 unit-currency="vnđ" @update:modelValue="onUpdateProItem"></product-item>
+                :price=20590 :sub-price=23590 unit-currency="vnđ" @itemClick:modelValue="onItemClickProd" @btnClick:modelValue="onBtnClickProd"></product-item>
             </v-slide-group-item>
           </v-slide-group>
         </v-card>

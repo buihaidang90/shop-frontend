@@ -14,12 +14,14 @@ npm i vue-router@4
 (https://router.vuejs.org/installation)
 
 # cài đặt i18n - thư viện quản lý locale, đa ngôn ngữ, và các định dạng số, ngày tháng, tiền tệ
+(https://www.npmjs.com/package/vue-i18n)
 npm i vue-i18n
 
 # cài đặt dayjs - thư viện quản lý ngày giờ
+(https://www.npmjs.com/package/dayjs)
 npm i dayjs
 
-# 
+# cài đặt 
 
 <!-- ##################################################################################################### -->
 
