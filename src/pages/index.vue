@@ -11,7 +11,7 @@ const banerItems = ref([
   { src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg', pdf: '/PayDay/EWA Service Introduction from VietUnion company_VN-combined.pdf', pdfJa: '/PayDay/EWA Service Introduction from VietUnion company_JP-combined.pdf' },
 ]);
 
-const tabs = ref(null);
+const activeTab = ref(0);
 const discountTabs = reactive([
   {
     name: 'tab 1', ftime: dayjs().set('hour', 8).set('minute', 0).set('second', 0), ttime: dayjs().set('hour', 10).set('minute', 0).set('second', 0), state: 'Ended'
@@ -24,6 +24,12 @@ const discountTabs = reactive([
   },
 ]);
 
+const onChangeTab = function(modelValue:any) {
+  // clog('onChangeTab >> modelValue >>', modelValue);
+  // clog('onChangeTab >> activeTab.value >>', activeTab.value);
+  if (modelValue == 1) activeTab.value = 2;
+};
+
 const onItemClickProd = function (modelValue: any) {
   clog('onItemClickProd >> modelValue >>', modelValue);
 };
@@ -31,6 +37,7 @@ const onBtnClickProd = function (modelValue: any, btn:object) {
   // clog('onBtnClickProd >> modelValue >>', modelValue);
   clog('onBtnClickProd >> btn obj >>', btn);
 };
+
 </script>
 
 <template>
@@ -44,14 +51,14 @@ const onBtnClickProd = function (modelValue: any, btn:object) {
   </v-card>
 
   <v-card class="mt-2 border-xl" border="info lg" width="100%">
-    <v-tabs v-model="tabs" bg-color="primary" color="white" align-tabs="center">
+    <v-tabs v-model="activeTab" bg-color="primary" color="white" align-tabs="center" @update:modelValue="onChangeTab">
       <v-tab v-for="(item, index) in discountTabs" :key="index" :value="index">
         <!-- <v-icon icon="mdi-phone"></v-icon> -->
         <!-- {{ xs ? '' : `Tab 1` }} -->
         {{ item.name }}
       </v-tab>
     </v-tabs>
-    <v-tabs-window v-model="tabs">
+    <v-tabs-window v-model="activeTab">
       <v-tabs-window-item v-for="(item, index) in discountTabs" :key="index" :value="index">
         <v-card>
           <v-slide-group :show-arrows="!xs">
