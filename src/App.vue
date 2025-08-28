@@ -62,7 +62,7 @@ provide('setLoadingPanel', setLoadingPanel);
   <v-app>
     <router-view />
     <Toast :position="xs ? 'bottom-center' : 'bottom-right'" style='max-width: calc(100vw - 40px);'
-      class="main-toast" />
+      :class="['main-toast', xs ? 'toast--xs' : 'toast--none-xs']" />
     <MessageBox ref="msgBox"/>
     <LoadingPanel ref="loadingBox"/>
   </v-app>
@@ -77,7 +77,11 @@ provide('setLoadingPanel', setLoadingPanel);
   margin-top: 1px !important;
 }
 
-.main-toast .p-toast-message {
+.toast-xs .p-toast-message {
+  margin-bottom: 1rem !important;
+}
+
+.toast--none-xs .p-toast-message {
   margin-bottom: 0.5rem !important;
 }
 </style>
