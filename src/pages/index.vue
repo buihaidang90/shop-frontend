@@ -25,39 +25,86 @@ interface TabItem {
 }
 const discountTabs = ref<TabItem[]>([]);
 const activeTab = ref(0);
-watch(discountTabs, async (newVal) => {
-  const now = new Date();
-  discountTabs.value.forEach(el => {
-    const from = el['ftime'];
-    const to = el['ttime'];
-    // clog('watch >> discountTabs >> forEach >> ftime >>', from);
-    // clog('watch >> discountTabs >> forEach >> ttime >>', to);
-    if (from <= now && now <= to) {
-      activeTab.value = discountTabs.value.indexOf(el);
-      duration.value = Math.ceil((to.getTime() - from.getTime()) / timeStep);
-      step.value = Math.ceil((now.getTime() - from.getTime()) / timeStep);
-    }
-  });
-}, { deep: true });
-const beginTime = ref(new Date());
-const endTime = ref(new Date());
+// watch(discountTabs, async (newVal) => {
+//   const now = new Date();
+//   discountTabs.value.forEach(el => {
+//     const from = el['ftime'];
+//     const to = el['ttime'];
+//     // clog('watch >> discountTabs >> forEach >> ftime >>', from);
+//     // clog('watch >> discountTabs >> forEach >> ttime >>', to);
+//     if (from <= now && now <= to) {
+//       activeTab.value = discountTabs.value.indexOf(el);
+//       duration.value = Math.ceil((to.getTime() - from.getTime()) / timeStep);
+//       step.value = Math.ceil((now.getTime() - from.getTime()) / timeStep);
+//     }
+//   });
+// }, { deep: true });
+const timerSystem = ref(new Date());
 const interval = ref();
 const timeStep = 1000; // second
 const duration = ref(0); // seconds
 const step = ref(0);
 const percentage = computed(() => {
   if (!duration.value || !step.value) return 0;
+  if (duration.value === 0) return 0;
   const r = Math.ceil(step.value * 100 / duration.value); // làm tròn lên, vd: 3.14 => 4
   // const r =  Math.floor(step.value *100/ duration.value ); // làm tròn xuống, vd: 3.78 => 3
-  // clog('computed >> percentage >> ', r);
+  clog('computed >> percentage >> ', r);
   return r;
 });
 watch(percentage, async (newVal) => {
   // clog('watch >> percentage >> newVal >>', newVal);
   if (percentage.value === 100) {
-
+    duration.value = 0;
+    step.value = 0;
+    discountTabs.value.forEach(el => {
+      const from = el['ftime'];
+      const to = el['ttime'];
+      // clog('watch >> timerSystem >> ftime >>', from);
+      // clog('watch >> timerSystem >> ttime >>', to);
+      if (from <= timerSystem.value && timerSystem.value <= to) return true;
+      el.onGoing = false;
+    });
   }
 }, { deep: true });
+watch(timerSystem, async (newVal) => {
+  if (duration.value === 0) {
+    discountTabs.value.forEach(el => {
+      const from = el['ftime'];
+      const to = el['ttime'];
+      // clog('watch >> timerSystem >> ftime >>', from);
+      // clog('watch >> timerSystem >> ttime >>', to);
+      if (newVal < from || newVal > to) return true;
+
+      el.onGoing = true;
+      // activeTab.value = discountTabs.value.indexOf(el);
+      duration.value = Math.ceil((newVal.getTime() - from.getTime()) / timeStep);
+      if (step.value) step.value = Math.ceil((newVal.getTime() - from.getTime()) / timeStep);
+      return false;
+    });
+  }
+  step.value++;
+});
+const tabHeader = computed(() => {
+  const r:Array<object> = [];
+  discountTabs.value.forEach(el => {
+    const from = el['ftime'];
+    const to = el['ttime'];
+    // clog('watch >> timerSystem >> ftime >>', from);
+    // clog('watch >> timerSystem >> ttime >>', to);
+    let headerTitle ='';
+    let showProgressBar = false;
+    if (timerSystem.value < from) headerTitle ='Sắp diễn ra';
+    else if (from <= timerSystem.value && timerSystem.value <= to) {headerTitle ='Đang diễn ra';
+    showProgressBar = true;
+  }
+    else if (to < timerSystem.value) headerTitle ='Đã kết thúc';
+    const o = {headerTitle, showProgressBar};
+    r.push(o);
+  });
+  return r;
+});
+const getTabHeader = (index:number) => tabHeader.value[index].headerTitle;
 
 const onChangeTab = function (modelValue: any) {
   // clog('onChangeTab >> modelValue >>', modelValue);
@@ -90,26 +137,34 @@ onMounted(async () => {
   else if (lg.value) showToast('lg-screen', '', 'w');
 
   interval.value = setInterval(() => {
-    if (percentage.value === 100) {
-      // clog('onMounted >> clearInterval');
-      clearInterval(interval.value);
-      discountTabs.value.forEach(el => {
-        if(el.onGoing) el.onGoing = false;
-      });
-    }
-    step.value++;;
-    // clog(`onMounted >> setInterval >> step/duration >> ${step.value}/${duration.value}`);
+    timerSystem.value.setTime(timerSystem.value.getTime() + timeStep);
+    // clog(`onMounted >> setInterval >> timerSystem >> ${timerSystem.value}`);
+    // clog('discountTabs.value[0].onGoing >>', discountTabs.value[0].onGoing);
+    // clog('discountTabs.value[1].onGoing >>', discountTabs.value[1].onGoing);
+    // clog('discountTabs.value[2].onGoing >>', discountTabs.value[2].onGoing);
   }, timeStep);
 
+  // interval.value = setInterval(() => {
+  //   if (percentage.value === 100) {
+  //     // clog('onMounted >> clearInterval');
+  //     // clearInterval(interval.value);
+  //     discountTabs.value.forEach(el => {
+  //       if(el.onGoing) el.onGoing = false;
+  //     });
+  //   }
+  //   step.value++;;
+  //   // clog(`onMounted >> setInterval >> step/duration >> ${step.value}/${duration.value}`);
+  // }, timeStep);
+
   discountTabs.value.push({
-    name: 'tab 1', ftime: dayjs().set('hour', 8).set('minute', 0).set('second', 0).toDate(), ttime: dayjs().set('hour', 10).set('minute', 0).set('second', 0).toDate(), onGoing:false
+    name: 'tab 1', ftime: dayjs().set('hour', 8).set('minute', 0).set('second', 0).toDate(), ttime: dayjs().set('hour', 10).set('minute', 0).set('second', 0).toDate(), onGoing: false
   });
   discountTabs.value.push({
-    name: 'tab 2', ftime: dayjs().set('hour', 12).set('minute', 0).set('second', 0).toDate(), ttime: dayjs().set('hour', 14).set('minute', 0).set('second', 0).toDate(), onGoing:false
+    name: 'tab 2', ftime: dayjs().set('hour', 12).set('minute', 0).set('second', 0).toDate(), ttime: dayjs().set('hour', 14).set('minute', 0).set('second', 0).toDate(), onGoing: false
   });
   discountTabs.value.push(
     {
-      name: 'tab 3', ftime: dayjs().set('hour', 16).set('minute', 35).set('second', 0).toDate(), ttime: dayjs().set('hour', 17).set('minute', 2).set('second', 40).toDate(), onGoing:true
+      name: 'tab 3', ftime: dayjs().set('hour', 16).set('minute', 32).set('second', 0).toDate(), ttime: dayjs().set('hour', 17).set('minute', 2).set('second', 40).toDate(), onGoing: false
     });
   activeTab.value = 2;
 });
@@ -140,10 +195,10 @@ onUnmounted(() => {
           {{ dayjs(item.ftime).format('HH:mm') + ' - ' + dayjs(item.ttime).format('HH:mm') }}
           <br>
           <!-- {{ activeTab === index  && percentage !== 100 ? 'Đang diễn ra' : 'Đã kết thúc' }} -->
-            {{ item.onGoing ? 'Đang diễn ra' : 'Đã kết thúc' }}
+          {{ tabHeader[index].headerTitle }}
           <br>
           <v-progress-linear color="light-blue" height="8" :model-value="percentage" striped
-            v-if="item.onGoing"></v-progress-linear>
+            v-if="tabHeader[index].showProgressBar"></v-progress-linear>
         </p>
       </v-tab>
     </v-tabs>
