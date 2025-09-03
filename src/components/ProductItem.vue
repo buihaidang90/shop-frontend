@@ -116,16 +116,15 @@ const localShowDiscount = computed(()=>localSaveAmt.value !== localPrice.value);
 </script>
 
 <template>
-    <v-card class="mx-1 my-2 pa-2" color="transparent" width="250">
+    <v-card class="mx-1 my-2 pa-2" color="transparent" width="250" height="398" @click.stop="handleItemClick">
         <v-row dense no-gutters>
             <v-col align="center">
                 <v-hover v-slot="{ isHovering, props }">
                     <v-card v-bind="props" class="rounded-lg" :elevation="isHovering ? 2 : 0">
-                        <v-img :aspect-ratio="1" class="bg-white product-img" :src="localImg" width="100%" cover
-                            @click.stop="handleItemClick">
+                        <v-img :aspect-ratio="1" class="bg-white product-img" :src="localImg" width="100%" cover>
                             <v-expand-transition height="25" v-if="localShowDiscount">
                                 <v-sheet class="d-flex bg-transparent product-reveal-top">
-                                    <v-row dense no-gutters @click.stop="handleItemClick">
+                                    <v-row dense no-gutters>
                                         <v-col></v-col>
                                         <v-col cols="auto">
                                             <div class="product-discount" elevation="2">{{ localSavePercent + '%' }}</div>
@@ -135,7 +134,7 @@ const localShowDiscount = computed(()=>localSaveAmt.value !== localPrice.value);
                             </v-expand-transition>
                             <v-expand-transition height="25%">
                                 <v-sheet v-if="isHovering || xs || sm" class="d-flex bg-transparent product-reveal-bottom">
-                                    <v-row dense no-gutters @click.stop="handleItemClick">
+                                    <v-row dense no-gutters>
                                         <v-col cols="6" align="end">
                                             <v-btn @click.stop="handleAct1Click" size="small" :icon="localIconAct1"
                                                 class="bg-white rounded-circle mr-2 pt-1 product-act1-btn"></v-btn>
@@ -169,7 +168,7 @@ const localShowDiscount = computed(()=>localSaveAmt.value !== localPrice.value);
         </v-row>
         <v-row dense no-gutters>
             <v-col>
-                <p class="product-title" @click.stop="handleItemClick">{{ localTitle }}</p>
+                <p class="product-title">{{ localTitle }}</p>
             </v-col>
         </v-row>
         <v-row dense>

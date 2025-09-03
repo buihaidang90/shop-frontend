@@ -21,90 +21,82 @@ interface TabItem {
   name: string;
   ftime: Date;
   ttime: Date;
-  onGoing: boolean;
 }
 const discountTabs = ref<TabItem[]>([]);
+const tabHeader = ref<string[]>([]);
 const activeTab = ref(0);
-// watch(discountTabs, async (newVal) => {
-//   const now = new Date();
-//   discountTabs.value.forEach(el => {
-//     const from = el['ftime'];
-//     const to = el['ttime'];
-//     // clog('watch >> discountTabs >> forEach >> ftime >>', from);
-//     // clog('watch >> discountTabs >> forEach >> ttime >>', to);
-//     if (from <= now && now <= to) {
-//       activeTab.value = discountTabs.value.indexOf(el);
-//       duration.value = Math.ceil((to.getTime() - from.getTime()) / timeStep);
-//       step.value = Math.ceil((now.getTime() - from.getTime()) / timeStep);
-//     }
-//   });
-// }, { deep: true });
+const onGoingTab =  ref(-1);
 const timerSystem = ref(new Date());
 const interval = ref();
 const timeStep = 1000; // second
 const duration = ref(0); // seconds
 const step = ref(0);
-const percentage = computed(() => {
-  if (!duration.value || !step.value) return 0;
-  if (duration.value === 0) return 0;
-  const r = Math.ceil(step.value * 100 / duration.value); // làm tròn lên, vd: 3.14 => 4
-  // const r =  Math.floor(step.value *100/ duration.value ); // làm tròn xuống, vd: 3.78 => 3
-  clog('computed >> percentage >> ', r);
-  return r;
-});
+const percentage = ref(0);
+const runSaleOff = function () {
+    timerSystem.value.setTime(timerSystem.value.getTime() + timeStep);
+    let timerValue = timerSystem.value;
+    // clog('runSaleOff >> timerValue >>', timerValue);
+
+    if (duration.value === 0) {
+      discountTabs.value.forEach(el => {
+        let from = el['ftime'];
+        let to = el['ttime'];
+        // clog('runSaleOff >> forEach >> ftime >>', from);
+        // clog('runSaleOff >> forEach >> ttime >>', to);
+        if (timerValue < from || timerValue > to) return true; // continue
+
+        duration.value = Math.ceil((to.getTime() - from.getTime()) / timeStep); // làm tròn lên, vd: 3.14 => 4
+        onGoingTab.value = discountTabs.value.indexOf(el);
+        percentage.value = 0;
+        return false; // break
+      });
+    }
+    if(onGoingTab.value > 0){
+      discountTabs.value.forEach(el => {
+        let from = el['ftime'];
+        let to = el['ttime'];
+        let currentStep = 0;
+        if (from <= timerValue && timerValue <= to)
+          currentStep = Math.ceil((timerValue.getTime() - from.getTime()) / timeStep); // làm tròn lên, vd: 3.14 => 4
+        if(step.value < currentStep) {
+          step.value = currentStep;
+          return false; // break
+        }
+      });
+      step.value++;
+      // clog('runSaleOff >> step/duration >>', `${step.value}/${duration.value}`);
+      percentage.value = Math.ceil(step.value * 100 / duration.value); // làm tròn lên, vd: 3.14 => 4
+      // percentage.value = Math.floor(step.value *100/ duration.value ); // làm tròn xuống, vd: 3.78 => 3
+      // clog('runSaleOff >> percentage >>', percentage.value);
+    }
+    
+    const r: Array<string> = [];
+    discountTabs.value.forEach(el => {
+      const from = el['ftime'];
+      const to = el['ttime'];
+      let headerTitle = '';
+      if (timerValue < from) headerTitle = 'Sắp diễn ra';
+      else if (from <= timerValue && timerValue <= to) headerTitle = 'Đang diễn ra';
+      else if (to < timerValue) headerTitle = 'Đã kết thúc';
+      r.push(headerTitle);
+    });
+    tabHeader.value = r;
+};
 watch(percentage, async (newVal) => {
   // clog('watch >> percentage >> newVal >>', newVal);
-  if (percentage.value === 100) {
+  if (percentage.value > 100) {
+    onGoingTab.value = -1;
     duration.value = 0;
     step.value = 0;
-    discountTabs.value.forEach(el => {
-      const from = el['ftime'];
-      const to = el['ttime'];
-      // clog('watch >> timerSystem >> ftime >>', from);
-      // clog('watch >> timerSystem >> ttime >>', to);
-      if (from <= timerSystem.value && timerSystem.value <= to) return true;
-      el.onGoing = false;
-    });
+    percentage.value = 0;
   }
 }, { deep: true });
-watch(timerSystem, async (newVal) => {
-  if (duration.value === 0) {
-    discountTabs.value.forEach(el => {
-      const from = el['ftime'];
-      const to = el['ttime'];
-      // clog('watch >> timerSystem >> ftime >>', from);
-      // clog('watch >> timerSystem >> ttime >>', to);
-      if (newVal < from || newVal > to) return true;
 
-      el.onGoing = true;
-      // activeTab.value = discountTabs.value.indexOf(el);
-      duration.value = Math.ceil((newVal.getTime() - from.getTime()) / timeStep);
-      if (step.value) step.value = Math.ceil((newVal.getTime() - from.getTime()) / timeStep);
-      return false;
-    });
-  }
-  step.value++;
-});
-const tabHeader = computed(() => {
-  const r:Array<object> = [];
-  discountTabs.value.forEach(el => {
-    const from = el['ftime'];
-    const to = el['ttime'];
-    // clog('watch >> timerSystem >> ftime >>', from);
-    // clog('watch >> timerSystem >> ttime >>', to);
-    let headerTitle ='';
-    let showProgressBar = false;
-    if (timerSystem.value < from) headerTitle ='Sắp diễn ra';
-    else if (from <= timerSystem.value && timerSystem.value <= to) {headerTitle ='Đang diễn ra';
-    showProgressBar = true;
-  }
-    else if (to < timerSystem.value) headerTitle ='Đã kết thúc';
-    const o = {headerTitle, showProgressBar};
-    r.push(o);
-  });
-  return r;
-});
-const getTabHeader = (index:number) => tabHeader.value[index].headerTitle;
+const isShowProgressBar = function (index: number) {
+  if (!onGoingTab.value) return false;
+  if (onGoingTab.value < 0) return false;
+  return onGoingTab.value === index;
+};
 
 const onChangeTab = function (modelValue: any) {
   // clog('onChangeTab >> modelValue >>', modelValue);
@@ -128,6 +120,8 @@ const onAct2ClickProd = function (modelValue: any) {
   clog('onAct2ClickProd >> modelValue >>', modelValue);
 };
 
+// ================================================================================
+
 onMounted(async () => {
   //cLog('onMounted >>');
   // window.addEventListener("resize", onResizeBrowser);
@@ -137,34 +131,24 @@ onMounted(async () => {
   else if (lg.value) showToast('lg-screen', '', 'w');
 
   interval.value = setInterval(() => {
-    timerSystem.value.setTime(timerSystem.value.getTime() + timeStep);
-    // clog(`onMounted >> setInterval >> timerSystem >> ${timerSystem.value}`);
-    // clog('discountTabs.value[0].onGoing >>', discountTabs.value[0].onGoing);
-    // clog('discountTabs.value[1].onGoing >>', discountTabs.value[1].onGoing);
-    // clog('discountTabs.value[2].onGoing >>', discountTabs.value[2].onGoing);
+    runSaleOff();
   }, timeStep);
 
-  // interval.value = setInterval(() => {
-  //   if (percentage.value === 100) {
-  //     // clog('onMounted >> clearInterval');
-  //     // clearInterval(interval.value);
-  //     discountTabs.value.forEach(el => {
-  //       if(el.onGoing) el.onGoing = false;
-  //     });
-  //   }
-  //   step.value++;;
-  //   // clog(`onMounted >> setInterval >> step/duration >> ${step.value}/${duration.value}`);
-  // }, timeStep);
-
   discountTabs.value.push({
-    name: 'tab 1', ftime: dayjs().set('hour', 8).set('minute', 0).set('second', 0).toDate(), ttime: dayjs().set('hour', 10).set('minute', 0).set('second', 0).toDate(), onGoing: false
+    name: 'tab 1',
+    ftime: dayjs().set('hour', 8).set('minute', 0).set('second', 0).toDate(),
+    ttime: dayjs().set('hour', 10).set('minute', 0).set('second', 0).toDate()
   });
   discountTabs.value.push({
-    name: 'tab 2', ftime: dayjs().set('hour', 12).set('minute', 0).set('second', 0).toDate(), ttime: dayjs().set('hour', 14).set('minute', 0).set('second', 0).toDate(), onGoing: false
+    name: 'tab 2',
+    ftime: dayjs().set('hour', 13).set('minute', 0).set('second', 0).toDate(),
+    ttime: dayjs().set('hour', 14).set('minute', 0).set('second', 0).toDate()
   });
   discountTabs.value.push(
     {
-      name: 'tab 3', ftime: dayjs().set('hour', 16).set('minute', 32).set('second', 0).toDate(), ttime: dayjs().set('hour', 17).set('minute', 2).set('second', 40).toDate(), onGoing: false
+      name: 'tab 3',
+      ftime: dayjs().set('hour', 15).set('minute', 0).set('second', 0).toDate(),
+      ttime: dayjs().set('hour', 16).set('minute', 0).set('second', 0).toDate()
     });
   activeTab.value = 2;
 });
@@ -195,10 +179,10 @@ onUnmounted(() => {
           {{ dayjs(item.ftime).format('HH:mm') + ' - ' + dayjs(item.ttime).format('HH:mm') }}
           <br>
           <!-- {{ activeTab === index  && percentage !== 100 ? 'Đang diễn ra' : 'Đã kết thúc' }} -->
-          {{ tabHeader[index].headerTitle }}
+          {{ tabHeader[index] }}
           <br>
-          <v-progress-linear color="light-blue" height="8" :model-value="percentage" striped
-            v-if="tabHeader[index].showProgressBar"></v-progress-linear>
+          <v-progress-linear color="light-blue" height="6" :model-value="percentage" striped class="rounded-xl"
+            v-if="isShowProgressBar(index)"></v-progress-linear>
         </p>
       </v-tab>
     </v-tabs>
