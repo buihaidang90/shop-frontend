@@ -4,6 +4,21 @@ const { xs, sm, md, lg, width, height } = useDisplay();
 import { defineProps, defineEmits } from 'vue';
 import { formatNumber, getImageUrl } from '@/helpers/utilities';
 
+// ================================================================================
+
+const localMaxWidth = function(){
+    if(xs.value) return 160;
+    else if (sm.value) return 200;
+    else return 250;
+};
+const localMaxHeight = function(){
+    if(xs.value) return 278;
+    else if (sm.value) return 328;
+    else return 398;
+};
+
+// ================================================================================
+
 const props = defineProps({
     img: {
         type: String,
@@ -72,6 +87,8 @@ const props = defineProps({
     // }
 });
 
+// ================================================================================
+
 const emits = defineEmits([
     'itemClick:modelValue',
     'btnClick:modelValue',
@@ -107,41 +124,43 @@ const localIconAct2 = ref(props.iconAct2);
 const localIconOnBtn = ref(props.iconOnBtn);
 const localTextOnBtn = ref(props.textOnBtn);
 const localSaveAmt = computed(() => Math.abs(localPrice.value - (localSubPrice.value ?? 0)));
-const localSavePercent = computed(() => Math.round(Math.abs(localSaveAmt.value*100/localPrice.value)));
+const localSavePercent = computed(() => Math.round(Math.abs(localSaveAmt.value * 100 / localPrice.value)));
 const localPriceFormated = computed(() => formatNumber(localPrice.value));
 const localSubPriceFormated = computed(() => formatNumber(localSubPrice.value));
 const localSaveAmtFormated = computed(() => formatNumber(localSaveAmt.value));
-const localShowDiscount = computed(()=>localSaveAmt.value !== localPrice.value);
+const localShowDiscount = computed(() => localSaveAmt.value !== localPrice.value);
 
 </script>
 
 <template>
-    <v-card class="mx-1 my-2 pa-2" color="transparent" width="250" height="398" @click.stop="handleItemClick">
+    <v-card class="mx-1 my-2 pa-2" color="transparent" :width="localMaxWidth()" :height="localMaxHeight()" @click.stop="handleItemClick">
         <v-row dense no-gutters>
             <v-col align="center">
                 <v-hover v-slot="{ isHovering, props }">
                     <v-card v-bind="props" class="rounded-lg" :elevation="isHovering ? 2 : 0">
                         <v-img :aspect-ratio="1" class="bg-white product-img" :src="localImg" width="100%" cover>
-                            <v-expand-transition height="25" v-if="localShowDiscount">
+                            <v-expand-transition height="15%" v-if="localShowDiscount">
                                 <v-sheet class="d-flex bg-transparent product-reveal-top">
                                     <v-row dense no-gutters>
                                         <v-col></v-col>
                                         <v-col cols="auto">
-                                            <div class="product-discount" elevation="2">{{ localSavePercent + '%' }}</div>
+                                            <div :class="['product-discount', sm ? 'product-discount-sm' : '', xs ? 'product-discount-xs': '']" elevation="2">{{ localSavePercent + '%' }}
+                                            </div>
                                         </v-col>
                                     </v-row>
                                 </v-sheet>
                             </v-expand-transition>
-                            <v-expand-transition height="25%">
-                                <v-sheet v-if="isHovering || xs || sm" class="d-flex bg-transparent product-reveal-bottom">
+                            <v-expand-transition :height="xs ? '34%' : '25%'">
+                                <v-sheet v-if="isHovering || xs || sm"
+                                    class="d-flex bg-transparent product-reveal-bottom">
                                     <v-row dense no-gutters>
                                         <v-col cols="6" align="end">
                                             <v-btn @click.stop="handleAct1Click" size="small" :icon="localIconAct1"
-                                                class="bg-white rounded-circle mr-2 pt-1 product-act1-btn"></v-btn>
+                                                :class="['bg-white', 'rounded-circle', 'mr-2', 'pt-1', 'product-act1-btn', sm ? 'product-act1-btn-sm' : '', xs ?'product-act1-btn-xs':'']"></v-btn>
                                         </v-col>
                                         <v-col cols="6" align="start">
                                             <v-btn @click.stop="handleAct2Click" size="small" :icon="localIconAct2"
-                                                class="bg-white rounded-circle ml-2 pt-1 product-act2-btn"></v-btn>
+                                                :class="['bg-white', 'rounded-circle', 'ml-2', 'pt-1', 'product-act2-btn', sm ? 'product-act2-btn-sm' :'', xs ? 'product-act2-btn-xs' : '']"></v-btn>
                                         </v-col>
                                     </v-row>
                                 </v-sheet>
@@ -153,12 +172,12 @@ const localShowDiscount = computed(()=>localSaveAmt.value !== localPrice.value);
         </v-row>
         <v-row dense no-gutters>
             <v-col>
-                <p class="product-price">{{ localPriceFormated }} <u>{{ localUnitCcy }}</u></p>
+                <p :class="['product-price', sm ? 'product-price-sm' : '', xs ? 'product-price-xs' : '']">{{ localPriceFormated }} <u>{{ localUnitCcy }}</u></p>
             </v-col>
         </v-row>
         <v-row dense no-gutters class="my-1">
             <v-col>
-                <p class="product-subprice" v-if="localShowDiscount">
+                <p :class="['product-subprice', sm ? 'product-subprice-sm' : '', xs ? 'product-subprice-xs' : '']" v-if="localShowDiscount">
                     <span>
                         {{ localSubPriceFormated + ' ' + localUnitCcy }}
                     </span> {{ 'Tiết kiệm' + ' ' + localSaveAmtFormated + ' ' + localUnitCcy }}
@@ -168,10 +187,10 @@ const localShowDiscount = computed(()=>localSaveAmt.value !== localPrice.value);
         </v-row>
         <v-row dense no-gutters>
             <v-col>
-                <p class="product-title">{{ localTitle }}</p>
+                <p :class="['product-title', sm ? 'product-title-sm' : '', xs ? 'product-title-xs' : '']">{{ localTitle }}</p>
             </v-col>
         </v-row>
-        <v-row dense>
+        <v-row dense :no-gutters="xs" :class="[xs ? 'mt-1' : '']">
             <v-col>
                 <v-btn width="100%" elevation="0" class="rounded-xl product-btn" color="blue-lighten-5"
                     @click.stop="handleBtnClick"><v-icon :icon="localIconOnBtn"></v-icon>{{
@@ -200,7 +219,7 @@ const localShowDiscount = computed(()=>localSaveAmt.value !== localPrice.value);
     width: 100%;
 }
 
-.product-discount{
+.product-discount {
     background-color: red;
     color: #fff;
     border-radius: 10px 10px 10px 0px;
@@ -209,6 +228,8 @@ const localShowDiscount = computed(()=>localSaveAmt.value !== localPrice.value);
     font-size: 14px;
     width: 40px;
 }
+.product-discount-sm {font-size: 12px !important;}
+.product-discount-xs {font-size: 12px !important;}
 
 .product-img:hover {
     cursor: pointer;
@@ -217,7 +238,11 @@ const localShowDiscount = computed(()=>localSaveAmt.value !== localPrice.value);
 .product-title {
     font-size: 14px;
     color: lightslategray;
+    max-height: 40px;
+    overflow-y: hidden;
 }
+.product-title-sm {font-size: 12px !important; max-height: 32px !important;}
+.product-title-xs {font-size: 11px !important; max-height: 32px !important;}
 
 .product-title:hover {
     cursor: pointer;
@@ -228,11 +253,16 @@ const localShowDiscount = computed(()=>localSaveAmt.value !== localPrice.value);
     font-size: 24px;
     color: #ff7b18;
 }
+.product-price-sm {font-size: 20px !important;}
+.product-price-xs {font-size: 16px !important;}
 
 .product-subprice {
     font-size: 12px;
     color: green;
+    max-height: 18px;
 }
+.product-subprice-sm {font-size: 10px !important; max-height: 15px !important;}
+.product-subprice-xs {font-size: 10px !important; max-height: 15px !important;}
 
 .product-subprice span {
     text-decoration: line-through;
@@ -254,6 +284,10 @@ const localShowDiscount = computed(()=>localSaveAmt.value !== localPrice.value);
     font-size: 1.2rem;
     font-weight: lighter;
 }
+.product-act1-btn-sm,
+.product-act2-btn-sm{font-size: 1rem !important;}
+.product-act1-btn-xs,
+.product-act2-btn-xs{font-size: 0.8rem !important;}
 
 .product-act1-btn:hover,
 .product-act2-btn:hover {

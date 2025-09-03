@@ -112,6 +112,7 @@ const onItemClickProd = function (modelValue: any) {
 const onBtnClickProd = function (modelValue: any, btn: object) {
   // clog('onBtnClickProd >> modelValue >>', modelValue);
   clog('onBtnClickProd >> btn obj >>', btn);
+  showToast('Already added to cart.', '', 's');
 };
 const onAct1ClickProd = function (modelValue: any) {
   clog('onAct1ClickProd >> modelValue >>', modelValue);
@@ -204,6 +205,8 @@ onUnmounted(() => {
       </v-tabs-window-item>
     </v-tabs-window>
   </v-card>
+
+  <v-card></v-card>
 </template>
 
 <style>
