@@ -171,12 +171,12 @@ const localShowDiscount = computed(() => localSaveAmt.value !== localPrice.value
             </v-col>
         </v-row>
         <v-row dense no-gutters>
-            <v-col>
+            <v-col align="start">
                 <p :class="['product-price', sm ? 'product-price-sm' : '', xs ? 'product-price-xs' : '']">{{ localPriceFormated }} <u>{{ localUnitCcy }}</u></p>
             </v-col>
         </v-row>
         <v-row dense no-gutters class="my-1">
-            <v-col>
+            <v-col align="start">
                 <p :class="['product-subprice', sm ? 'product-subprice-sm' : '', xs ? 'product-subprice-xs' : '']" v-if="localShowDiscount">
                     <span>
                         {{ localSubPriceFormated + ' ' + localUnitCcy }}
@@ -186,7 +186,7 @@ const localShowDiscount = computed(() => localSaveAmt.value !== localPrice.value
             </v-col>
         </v-row>
         <v-row dense no-gutters>
-            <v-col>
+            <v-col align="start">
                 <p :class="['product-title', sm ? 'product-title-sm' : '', xs ? 'product-title-xs' : '']">{{ localTitle }}</p>
             </v-col>
         </v-row>
@@ -260,6 +260,7 @@ const localShowDiscount = computed(() => localSaveAmt.value !== localPrice.value
     font-size: 12px;
     color: green;
     max-height: 18px;
+    overflow-y: hidden;
 }
 .product-subprice-sm {font-size: 10px !important; max-height: 15px !important;}
 .product-subprice-xs {font-size: 10px !important; max-height: 15px !important;}

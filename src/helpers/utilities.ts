@@ -192,3 +192,13 @@ export const formatNumber = (input: number) => {
 //     return obj.toString();
 //   }
 // };
+
+export const isEmptyObject = (obj:object | null) => {
+  if (!obj || obj === null || isUndefined(obj)) return true;
+  for (const prop in obj) {
+    if (Object.hasOwn(obj, prop)) {
+      return false;
+    }
+  }
+  return true;
+};

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { clog } from '@/helpers/utilities';
+import { clog, getImageUrl } from '@/helpers/utilities';
 import dayjs from 'dayjs';
 import { useDisplay } from 'vuetify';
 const { xs, sm, md, lg, width, height } = useDisplay();
@@ -25,7 +25,7 @@ interface TabItem {
 const discountTabs = ref<TabItem[]>([]);
 const tabHeader = ref<string[]>([]);
 const activeTab = ref(0);
-const onGoingTab =  ref(-1);
+const onGoingTab = ref(-1);
 const timerSystem = ref(new Date());
 const interval = ref();
 const timeStep = 1000; // second
@@ -33,54 +33,54 @@ const duration = ref(0); // seconds
 const step = ref(0);
 const percentage = ref(0);
 const runSaleOff = function () {
-    timerSystem.value.setTime(timerSystem.value.getTime() + timeStep);
-    let timerValue = timerSystem.value;
-    // clog('runSaleOff >> timerValue >>', timerValue);
+  timerSystem.value.setTime(timerSystem.value.getTime() + timeStep);
+  let timerValue = timerSystem.value;
+  // clog('runSaleOff >> timerValue >>', timerValue);
 
-    if (duration.value === 0) {
-      discountTabs.value.forEach(el => {
-        let from = el['ftime'];
-        let to = el['ttime'];
-        // clog('runSaleOff >> forEach >> ftime >>', from);
-        // clog('runSaleOff >> forEach >> ttime >>', to);
-        if (timerValue < from || timerValue > to) return true; // continue
-
-        duration.value = Math.ceil((to.getTime() - from.getTime()) / timeStep); // làm tròn lên, vd: 3.14 => 4
-        onGoingTab.value = discountTabs.value.indexOf(el);
-        percentage.value = 0;
-        return false; // break
-      });
-    }
-    if(onGoingTab.value > 0){
-      discountTabs.value.forEach(el => {
-        let from = el['ftime'];
-        let to = el['ttime'];
-        let currentStep = 0;
-        if (from <= timerValue && timerValue <= to)
-          currentStep = Math.ceil((timerValue.getTime() - from.getTime()) / timeStep); // làm tròn lên, vd: 3.14 => 4
-        if(step.value < currentStep) {
-          step.value = currentStep;
-          return false; // break
-        }
-      });
-      step.value++;
-      // clog('runSaleOff >> step/duration >>', `${step.value}/${duration.value}`);
-      percentage.value = Math.ceil(step.value * 100 / duration.value); // làm tròn lên, vd: 3.14 => 4
-      // percentage.value = Math.floor(step.value *100/ duration.value ); // làm tròn xuống, vd: 3.78 => 3
-      // clog('runSaleOff >> percentage >>', percentage.value);
-    }
-    
-    const r: Array<string> = [];
+  if (duration.value === 0) {
     discountTabs.value.forEach(el => {
-      const from = el['ftime'];
-      const to = el['ttime'];
-      let headerTitle = '';
-      if (timerValue < from) headerTitle = 'Sắp diễn ra';
-      else if (from <= timerValue && timerValue <= to) headerTitle = 'Đang diễn ra';
-      else if (to < timerValue) headerTitle = 'Đã kết thúc';
-      r.push(headerTitle);
+      let from = el['ftime'];
+      let to = el['ttime'];
+      // clog('runSaleOff >> forEach >> ftime >>', from);
+      // clog('runSaleOff >> forEach >> ttime >>', to);
+      if (timerValue < from || timerValue > to) return true; // continue
+
+      duration.value = Math.ceil((to.getTime() - from.getTime()) / timeStep); // làm tròn lên, vd: 3.14 => 4
+      onGoingTab.value = discountTabs.value.indexOf(el);
+      percentage.value = 0;
+      return false; // break
     });
-    tabHeader.value = r;
+  }
+  if (onGoingTab.value > 0) {
+    discountTabs.value.forEach(el => {
+      let from = el['ftime'];
+      let to = el['ttime'];
+      let currentStep = 0;
+      if (from <= timerValue && timerValue <= to)
+        currentStep = Math.ceil((timerValue.getTime() - from.getTime()) / timeStep); // làm tròn lên, vd: 3.14 => 4
+      if (step.value < currentStep) {
+        step.value = currentStep;
+        return false; // break
+      }
+    });
+    step.value++;
+    // clog('runSaleOff >> step/duration >>', `${step.value}/${duration.value}`);
+    percentage.value = Math.ceil(step.value * 100 / duration.value); // làm tròn lên, vd: 3.14 => 4
+    // percentage.value = Math.floor(step.value *100/ duration.value ); // làm tròn xuống, vd: 3.78 => 3
+    // clog('runSaleOff >> percentage >>', percentage.value);
+  }
+
+  const r: Array<string> = [];
+  discountTabs.value.forEach(el => {
+    const from = el['ftime'];
+    const to = el['ttime'];
+    let headerTitle = '';
+    if (timerValue < from) headerTitle = 'Sắp diễn ra';
+    else if (from <= timerValue && timerValue <= to) headerTitle = 'Đang diễn ra';
+    else if (to < timerValue) headerTitle = 'Đã kết thúc';
+    r.push(headerTitle);
+  });
+  tabHeader.value = r;
 };
 watch(percentage, async (newVal) => {
   // clog('watch >> percentage >> newVal >>', newVal);
@@ -119,6 +119,14 @@ const onAct1ClickProd = function (modelValue: any) {
 };
 const onAct2ClickProd = function (modelValue: any) {
   clog('onAct2ClickProd >> modelValue >>', modelValue);
+};
+
+// ================================================================================
+
+const collectSelected = ref('');
+const onClickCollected = function () {
+  clog('onClickCollected >>');
+  // collectSelected.value = 'collected-item-active';
 };
 
 // ================================================================================
@@ -206,11 +214,38 @@ onUnmounted(() => {
     </v-tabs-window>
   </v-card>
 
-  <v-card></v-card>
+  <v-card>
+    <v-row no-gutters class="ma-0 pa-0">
+      <v-sheet v-for="index in 4" width="70" height="70" class="rounded-lg my-2 mx-1 collected-item" :class="[collectSelected]"
+        @click="onClickCollected">
+        <v-col align="center"><v-img :aspect-ratio="1" class="rounded-circle" :src="getImageUrl('no-img-ava.jpg', null)"
+            cover></v-img></v-col>
+      </v-sheet>
+    </v-row>
+    <v-card class="mx-1 pa-2 rounded-lg" color="orange">
+      <v-card>
+        <v-row dense no-gutters justify="space-around">
+          <v-col sm=4 xs="6" v-for="(item, ind) in 10" align="center">
+            <product-item title="Nho xanh Sweet Globe Úc 450g (1 Hộp)" :price=75000 :sub-price=89000 unit-currency="vnđ"
+              @itemClick:modelValue="onItemClickProd" @btnClick:modelValue="onBtnClickProd"
+              @act1-click:model-value="onAct1ClickProd" @act2-click:model-value="onAct2ClickProd"></product-item>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-card>
+  </v-card>
 </template>
 
 <style>
 .v-tab-item--selected {
   background-color: rgba(255, 118, 0, 0.1);
+}
+</style>
+<style scoped>
+.collected-item-active,
+.collected-item:hover {
+  cursor: pointer;
+  background-color: #FFEBCD;
+  border:3px solid #FF9800
 }
 </style>

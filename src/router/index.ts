@@ -63,7 +63,8 @@ const router = createRouter({
 // });
 
 router.afterEach((to, from, next) => {
-    document.title = to.meta.title ?? 'Shop Management'; // Fallback title
+    // document.title = to.meta.title ?? 'Shop Management'; // Fallback title
+    document.title = 'Shop Management'; // Fallback title
     window.scrollTo(0, 0);
 });
 
