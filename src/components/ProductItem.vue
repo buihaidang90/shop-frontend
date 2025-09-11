@@ -4,15 +4,36 @@ const { xs, sm, md, lg, width, height } = useDisplay();
 import { defineProps, defineEmits } from 'vue';
 import { formatNumber, getImageUrl } from '@/helpers/utilities';
 
+const mobileS = 320;
+const mobileM = 375;
+const mobileL = 425;
+// const screen768 = 768;
+// const screen1024 = 1024;
+// const screen1440 = 1440;
+// const screen2560 = 2560;
+
 // ================================================================================
 
 const localMaxWidth = function(){
-    if(xs.value) return 160;
-    else if (sm.value) return 200;
+    if(xs.value) {
+        if(width.value <= mobileS) return 138;
+        if(width.value <= mobileM) return 160;
+        if(width.value <= mobileL) return 180;
+        return 160;
+    }
+    if(xs.value) return 138;
+    else if (sm.value) {
+        return 200;
+    }
     else return 250;
 };
 const localMaxHeight = function(){
-    if(xs.value) return 278;
+    if(xs.value) {
+        if(width.value <= mobileS) return 256;
+        if(width.value <= mobileM) return 278;
+        if(width.value <= mobileL) return 298;
+        return 278;
+    }
     else if (sm.value) return 328;
     else return 398;
 };

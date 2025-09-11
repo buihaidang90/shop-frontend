@@ -71,7 +71,7 @@ export default defineConfig({
   define: { "process.env": {} },
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("src", import.meta.url)),
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
     extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"],
   },
@@ -89,10 +89,11 @@ export default defineConfig({
     port: 8000,
   },
   // base: './', // or ''
-  // build: {
+  build: {
+    target: 'ESNext',
   //   outDir: "dist", // thư mục chứa output sau khi chạy lệnh build, mặc định là dist
   //   assetsDir: 'static-assets', // Assets will be in ./dist/static-assets (if outDir is 'dist')
-  // },
+  },
   // publicDir: './my-public-files', // thư mục chứa file tĩnh (static assets) ./my-public-files 
   // => Tùy chọn này chỉ định một thư mục cho các tài sản tĩnh được sao chép trực tiếp vào outDir
   // mà không cần xử lý bởi quy trình build của Vite. Mặc định là public

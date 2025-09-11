@@ -31,7 +31,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler", // ko yêu cầu phần mở rộng tệp (extension) trên đường dẫn tương đối khi import
     "types": ["node"],
-    "target": "ES2023",
-    // "lib": ["ESNext", "ES2022", "DOM"], // , "ES2015"
+    "target": "ESNext",
+    "lib": ["ESNext", "ES2022", "DOM"], // , "ES2015"
   }
 }

@@ -4,6 +4,8 @@
         "Account": "Account",
         "Password": "Password",
         "OK": "OK",
+        "Yes": "Yes",
+        "No": "No",
         "Cancel": "Cancel",
         "Reset": "Reset"
     },

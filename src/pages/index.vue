@@ -203,7 +203,7 @@ onUnmounted(() => {
               <!-- <product-item title="Combo 5 Loại Rau Củ: Cải Ngọt, Rau Muống, Rau Dền, Cà Rốt, Cà Chua"
                 img="https://bizweb.dktcdn.net/thumb/medium/100/565/842/products/image-79e72a57-d705-4f6b-a35f-024032ea1a7a.jpg"
                 :price=20590 :sub-price=23590 unit-currency="vnđ" @update:modelValue="onUpdateProItem"></product-item> -->
-              <product-item title="Combo 5 Loại Rau Củ: Cải Ngọt, Rau Muống, Rau Dền, Cà Rốt, Cà Chua" :price=20590
+              <product-item class="ml-2 mr-2" title="Combo 5 Loại Rau Củ: Cải Ngọt, Rau Muống, Rau Dền, Cà Rốt, Cà Chua" :price=20590
                 :sub-price=23590 unit-currency="vnđ" @itemClick:modelValue="onItemClickProd"
                 @btnClick:modelValue="onBtnClickProd" @act1-click:model-value="onAct1ClickProd"
                 @act2-click:model-value="onAct2ClickProd"></product-item>
@@ -225,7 +225,7 @@ onUnmounted(() => {
     <v-card class="mx-1 pa-2 rounded-lg" color="orange">
       <v-card>
         <v-row dense no-gutters justify="space-around">
-          <v-col sm=4 xs="6" v-for="(item, ind) in 10" align="center">
+          <v-col md="3" sm=4 xs="6" v-for="(item, ind) in 10" align="center">
             <product-item title="Nho xanh Sweet Globe Úc 450g (1 Hộp)" :price=75000 :sub-price=89000 unit-currency="vnđ"
               @itemClick:modelValue="onItemClickProd" @btnClick:modelValue="onBtnClickProd"
               @act1-click:model-value="onAct1ClickProd" @act2-click:model-value="onAct2ClickProd"></product-item>

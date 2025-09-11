@@ -114,6 +114,7 @@ export const findElement = (sourceArr: Array<any>, keyStr: string, value: any) =
     let ind = sourceArr.findIndex((item) => item[keyStr] === value);
     // clog('🛠️ >> findElement >> ind >>', ind);
     if (ind > -1) {
+      // clog('🛠️ >> findElement >> el >>', sourceArr[ind]);
       return sourceArr[ind];
     }
     return null;
@@ -139,9 +140,16 @@ export const formatNumber = (input: number) => {
 
   try {
     let output = Intl.NumberFormat("vi").format(input); // => ex: '1.234.567,89'
+    // or using regex
     output = output.replace('/,/g', defined.transChar);
     output = output.replace('/./g', defined.thousand);
     output = output.replace(`${defined.transChar}/g`, defined.decimal);
+
+    // or using replaceAll
+    // output = output.replaceAll(',', defined.transChar);
+    // output = output.replaceAll('.', defined.thousand);
+    // output = output.replaceAll(defined.transChar, defined.decimal);
+
     // clog('🛠️ >> formatNumber >> output >>', output);
     return output;
   }
